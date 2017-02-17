@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
 
-  root to: 'static_pages#index'
+  root to: 'static_pages#root'
+
+  # namespace :api, defaults: {format: :json} do
+  #   resources :sessions, only: [:create, :destroy]
+  # end
+
+  get 'auth/twitter/callback', to: 'sessions#create'
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

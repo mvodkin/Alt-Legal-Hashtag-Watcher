@@ -12,8 +12,7 @@
 !/log/.keep
 /tmp
 node_modules
-bundle.js
-bundle.js.map
+
 drawing_arr.txt
 .DS_Store
 .byebug_history
