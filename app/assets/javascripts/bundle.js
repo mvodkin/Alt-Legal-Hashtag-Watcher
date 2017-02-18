@@ -9518,16 +9518,28 @@ var Header = function Header() {
   return _react2.default.createElement(
     "header",
     null,
-    _react2.default.createElement("div", { className: "header-logo" }),
     _react2.default.createElement(
       "div",
-      null,
-      "Watchlists"
-    ),
-    _react2.default.createElement(
-      "a",
-      { href: "/auth/twitter" },
-      "Twitter Login"
+      { className: "header-content" },
+      _react2.default.createElement(
+        "div",
+        { className: "header-content-left" },
+        _react2.default.createElement("div", { className: "header-logo" })
+      ),
+      _react2.default.createElement(
+        "div",
+        { className: "header-content-right" },
+        _react2.default.createElement(
+          "span",
+          null,
+          "Watchlists"
+        ),
+        _react2.default.createElement(
+          "a",
+          { href: "/auth/twitter" },
+          "Twitter Login"
+        )
+      )
     )
   );
 };

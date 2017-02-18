@@ -4,9 +4,15 @@ const Header = () => {
 
   return (
     <header>
-      <div className="header-logo"></div>
-      <div>Watchlists</div>
-      <a href="/auth/twitter">Twitter Login</a>
+      <div className="header-content">
+        <div className="header-content-left">
+          <div className="header-logo"></div>
+        </div>
+        <div className="header-content-right">
+          <span>Watchlists</span>
+          <a href="/auth/twitter">Twitter Login</a>
+        </div>
+      </div>
     </header>
   );
 }
