@@ -9523,6 +9523,11 @@ var Header = function Header() {
       "div",
       null,
       "Watchlists"
+    ),
+    _react2.default.createElement(
+      "a",
+      { href: "/auth/twitter" },
+      "Twitter Login"
     )
   );
 };

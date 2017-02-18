@@ -6,6 +6,7 @@ const Header = () => {
     <header>
       <div className="header-logo"></div>
       <div>Watchlists</div>
+      <a href="/auth/twitter">Twitter Login</a>
     </header>
   );
 }
