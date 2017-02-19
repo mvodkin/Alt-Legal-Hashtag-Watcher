@@ -6,7 +6,8 @@ header {
   position: relative;
   width: 100%;
   margin: 0;
-  padding: 20px 0 20px 0;
+  // height: 100px;
+  padding: 28px 0 27px 0;
   border-bottom: 1px solid #afafad;
   font-family: "Lato", "Helvetica", "Arial", sans-serif;
   text-transform: uppercase;
@@ -17,10 +18,13 @@ header {
 
 .header-logo {
   background-image: image-url("al-logo.png");
+  background-size: contain;
   height: 45px;
-  width: 240px;
+  width: 220px;
   background-repeat: no-repeat;
   display: block;
+  align-self: baseline;
+  background-position-y: 4px;
 }
 
 .header-content {

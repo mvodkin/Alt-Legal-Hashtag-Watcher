@@ -16,6 +16,12 @@
 
 class User < ActiveRecord::Base
 
+  has_one :watchlist
+
+  has_many :hashtags,
+    through: :watchlist,
+    source: :hashtags
+
   def self.from_omniauth(auth_hash)
     user = self.find_or_initialize_by(uid: auth_hash[:uid])
     user.name = auth_hash[:info][:name]
