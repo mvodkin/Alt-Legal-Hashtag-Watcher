@@ -1,0 +1,10 @@
+json.extract! user,
+  :id,
+  :nickname,
+  :name,
+  :url,
+  :image,
+  :token,
+  :secret,
+  :watchlist,
+  :hashtags

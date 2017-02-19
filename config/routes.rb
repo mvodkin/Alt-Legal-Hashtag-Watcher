@@ -7,7 +7,14 @@ Rails.application.routes.draw do
   # end
 
   get 'auth/twitter/callback', to: 'sessions#create'
-  
+
+  destroy 'logout', to: 'sessions#destroy'
+
+  namespace :api, defaults: {format: :json} do
+    resources :users, only: [:show, :destroy]
+    resources :hashtags, only: [:show, :create, :destroy]
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
