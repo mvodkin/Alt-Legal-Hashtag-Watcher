@@ -2,13 +2,9 @@ Rails.application.routes.draw do
 
   root to: 'static_pages#root'
 
-  # namespace :api, defaults: {format: :json} do
-  #   resources :sessions, only: [:create, :destroy]
-  # end
-
   get 'auth/twitter/callback', to: 'sessions#create'
 
-  destroy 'logout', to: 'sessions#destroy'
+  delete 'logout', to: 'sessions#destroy'
 
   namespace :api, defaults: {format: :json} do
     resources :users, only: [:show, :destroy]
