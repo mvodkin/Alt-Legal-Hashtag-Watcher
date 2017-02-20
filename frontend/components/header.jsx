@@ -1,6 +1,24 @@
 import React, { Component } from "react";
 
-const Header = () => {
+const Header = (props) => {
+
+  const { name, image } = props.user;
+
+  const renderUser = () => {
+    if (props.user) {
+      return (
+        <div>
+          <img src={image}></img>
+          <span>{name}</span>
+          <span className="caret"></span>
+        </div>
+      )
+    } else {
+      return (
+        <a href="/auth/twitter">Twitter Login</a>
+      )
+    }
+  }
 
   return (
     <header>
@@ -10,7 +28,7 @@ const Header = () => {
         </div>
         <div className="header-content-right">
           <span>Watchlists</span>
-          <a href="/auth/twitter">Twitter Login</a>
+          {renderUser()}
         </div>
       </div>
     </header>

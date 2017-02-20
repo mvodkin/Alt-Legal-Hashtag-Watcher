@@ -1,17 +1,15 @@
 import React, { Component } from "react";
-import Header from "./header";
+import { Provider } from "react-redux";
+import HeaderContainer from "./header_container";
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-  }
+const App = ({store}) => {
 
-  render() {
-    return (
-      <Header/>
-    )
-  }
 
+  return (
+    <Provider store={store}>
+      <HeaderContainer/>
+    </Provider>
+  )
 }
 
 export default App;
