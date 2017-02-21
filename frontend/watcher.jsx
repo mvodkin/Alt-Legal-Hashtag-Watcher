@@ -9,9 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let store;
   let initialState = {}
 
-  // if (window.currentUser) {
-  //   initialState = {user: window.currentUser};
-  // }
+  if (window.currentUser) {
+    initialState = {user: window.currentUser};
+  }
 
   store = configureStore(initialState);
 

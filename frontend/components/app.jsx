@@ -4,7 +4,6 @@ import HeaderContainer from "./header_container";
 
 const App = ({store}) => {
 
-
   return (
     <Provider store={store}>
       <HeaderContainer/>

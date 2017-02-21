@@ -1,19 +1,17 @@
 import React, { Component } from "react";
 
-const Header = (props) => {
-
-  const { name, image } = props.user;
-
-  const handleLogout = () => {
-    props.logout()
+class Header extends Component {
+  constructor(props) {
+    super(props);
   }
 
-  const renderUser = () => {
+  renderUser() {
+    const { name, image } = this.props.user;
     if (name) {
       return (
         <div>
           <img src={image}></img>
-          <span onClick={handleLogout}>{name}</span>
+          <span onClick={this.props.logout}>{name}</span>
           <span className="caret"></span>
         </div>
       )
@@ -24,19 +22,21 @@ const Header = (props) => {
     }
   }
 
-  return (
-    <header>
-      <div className="header-content">
-        <div className="header-content-left">
-          <div className="header-logo"></div>
+  render() {
+    return (
+      <header>
+        <div className="header-content">
+          <div className="header-content-left">
+            <div className="header-logo"></div>
+          </div>
+          <div className="header-content-right">
+            <span>Watchlists</span>
+            {this.renderUser()}
+          </div>
         </div>
-        <div className="header-content-right">
-          <span>Watchlists</span>
-          {renderUser()}
-        </div>
-      </div>
-    </header>
-  );
+      </header>
+    );
+  }
 }
 
 export default Header;
