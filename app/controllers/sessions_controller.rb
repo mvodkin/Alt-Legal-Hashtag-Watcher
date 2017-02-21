@@ -11,8 +11,8 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session.delete(:user_id) if current_user
-    redirect_to root_path
+    session.delete(:user_id)
+    render json: {}, status: 200
   end
 
 end

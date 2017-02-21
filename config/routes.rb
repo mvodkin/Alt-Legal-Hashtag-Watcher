@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   get 'auth/twitter/callback', to: 'sessions#create'
 
-  delete 'logout', to: 'sessions#destroy'
+  get 'logout', to: 'sessions#destroy'
 
   namespace :api, defaults: {format: :json} do
     resources :users, only: [:show, :destroy]

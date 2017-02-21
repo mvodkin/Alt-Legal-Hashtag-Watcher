@@ -4,12 +4,16 @@ const Header = (props) => {
 
   const { name, image } = props.user;
 
+  const handleLogout = () => {
+    props.logout()
+  }
+
   const renderUser = () => {
-    if (props.user) {
+    if (name) {
       return (
         <div>
           <img src={image}></img>
-          <span>{name}</span>
+          <span onClick={handleLogout}>{name}</span>
           <span className="caret"></span>
         </div>
       )

@@ -1,4 +1,4 @@
-import * as ApiUtil from "../util/api_util";
+// import * as ApiUtil from "../util/api_util";
 import fetch from "isomorphic-fetch";
 
 export const REQUEST_CURRENT_USER = "REQUEST_CURRENT_USER";
@@ -10,18 +10,23 @@ export const ADD_HASHTAG = "ADD_HASHTAG";
 export const RECEIVE_HASHTAG = "RECEIVE_HASHTAG";
 export const REMOVE_HASHTAG = "REMOVE_HASHTAG";
 
-export const receiveLogout = () => ({
+const receiveLogout = () => ({
   type: RECEIVE_LOGOUT
-})
+});
 
-export const fetchLogout = () => dispatch => {
-    fetch("logout", { method: "DELETE" })
-      .then(dispatch(receiveLogout))
-      .catch(error => console.log(error));
-}
+const requestLogout = () => ({
+  type: REQUEST_LOGOUT
+});
+
+export const fetchLogout = () => dispatch => (
+  fetch("/logout")
+    .then(() => dispatch(receiveLogout))
+    .catch(error => console.log(error))
+);
+
 
 export const addHashtag = () => ({
   type: ADD_HASHTAG,
   text,
   user_id
-})
+});

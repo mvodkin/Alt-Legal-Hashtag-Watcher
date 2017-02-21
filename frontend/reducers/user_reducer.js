@@ -1,14 +1,16 @@
+import {RECEIVE_LOGOUT} from "../actions/actions"
+
 const _nullUser = Object.freeze({
-  currentUser: null,
-  errors: []
+  user: null,
 });
 
-const UserReducer = (state = _nullUser, action) => {
+const userReducer = (state = {}, action) => {
   switch (action.type) {
-
+    case RECEIVE_LOGOUT:
+      return {};
     default:
       return state;
   }
 };
 
-export default UserReducer;
+export default userReducer;
