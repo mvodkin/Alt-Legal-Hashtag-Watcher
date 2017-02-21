@@ -24125,7 +24125,7 @@ var mapStateToProps = function mapStateToProps(_ref) {
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
     logout: function logout() {
-      return dispatch(_actions.fetchLogout);
+      return dispatch((0, _actions.fetchLogout)());
     }
   };
 };
@@ -24203,8 +24203,9 @@ var requestLogout = function requestLogout() {
 
 var fetchLogout = exports.fetchLogout = function fetchLogout() {
   return function (dispatch) {
-    return (0, _isomorphicFetch2.default)("/logout").then(function () {
-      return dispatch(receiveLogout);
+    dispatch(requestLogout());
+    (0, _isomorphicFetch2.default)("/logout").then(function () {
+      return dispatch(receiveLogout());
     }).catch(function (error) {
       return console.log(error);
     });

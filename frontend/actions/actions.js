@@ -18,11 +18,12 @@ const requestLogout = () => ({
   type: REQUEST_LOGOUT
 });
 
-export const fetchLogout = () => dispatch => (
+export const fetchLogout = () => dispatch => {
+  dispatch(requestLogout());
   fetch("/logout")
-    .then(() => dispatch(receiveLogout))
-    .catch(error => console.log(error))
-);
+    .then(() => dispatch(receiveLogout()))
+    .catch(error => console.log(error));
+};
 
 
 export const addHashtag = () => ({

@@ -16,6 +16,8 @@
 
 class User < ActiveRecord::Base
 
+  after_initialize :ensure_session_token
+
   has_one :watchlist
 
   has_many :hashtags,
@@ -32,6 +34,20 @@ class User < ActiveRecord::Base
     user.secret = auth_hash[:credentials][:secret]
     user.save!
     user
+  end
+
+  def self.generate_session_token
+    SecureRandom.base64(16)
+  end
+
+  def reset_session_token
+    self.session_token = User.generate_session_token
+    self.save
+    self.session_token
+  end
+
+  def ensure_session_token
+    self.session_token ||= User.generate_session_token
   end
 
 end

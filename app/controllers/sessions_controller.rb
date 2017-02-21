@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
   def create
     begin
       @user = User.from_omniauth(request.env['omniauth.auth'])
-      session[:user_id] = @user.id
+      session[:session_token] = @user.reset_session_token
       redirect_to root_path
     rescue
       render json: "error", status: 422
@@ -11,7 +11,8 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session.delete(:user_id)
+    current_user.reset_session_token
+    session[:session_token] = nil
     render json: {}, status: 200
   end
 
