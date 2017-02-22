@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     resources :users, only: [:show, :destroy]
-    resources :hashtags, only: [:show, :create, :destroy]
+    resources :hashtags, only: [:index, :show, :create, :destroy, :update]
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

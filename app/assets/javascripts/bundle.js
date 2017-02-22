@@ -24172,7 +24172,7 @@ exports['default'] = thunk;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addHashtag = exports.fetchLogout = exports.REMOVE_HASHTAG = exports.RECEIVE_HASHTAG = exports.ADD_HASHTAG = exports.RECEIVE_LOGOUT = exports.REQUEST_LOGOUT = exports.RECEIVE_CURRENT_USER = exports.REQUEST_CURRENT_USER = undefined;
+exports.fetchDeleteHashtag = exports.RECEIVE_DELETE_HASHTAG = exports.REQUEST_DELETE_HASHTAG = exports.fetchAddHashtag = exports.RECEIVE_HASHTAG = exports.ADD_HASHTAG = exports.fetchLogout = exports.REQUEST_LOGOUT = exports.RECEIVE_LOGOUT = exports.REMOVE_HASHTAG = exports.RECEIVE_CURRENT_USER = exports.REQUEST_CURRENT_USER = undefined;
 
 var _isomorphicFetch = __webpack_require__(226);
 
@@ -24182,19 +24182,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var REQUEST_CURRENT_USER = exports.REQUEST_CURRENT_USER = "REQUEST_CURRENT_USER"; // import * as ApiUtil from "../util/api_util";
 var RECEIVE_CURRENT_USER = exports.RECEIVE_CURRENT_USER = "RECEIVE_CURRENT_USER";
-var REQUEST_LOGOUT = exports.REQUEST_LOGOUT = "REQUEST_LOGOUT";
-var RECEIVE_LOGOUT = exports.RECEIVE_LOGOUT = "LOGOUT";
 
-var ADD_HASHTAG = exports.ADD_HASHTAG = "ADD_HASHTAG";
-var RECEIVE_HASHTAG = exports.RECEIVE_HASHTAG = "RECEIVE_HASHTAG";
 var REMOVE_HASHTAG = exports.REMOVE_HASHTAG = "REMOVE_HASHTAG";
 
+var RECEIVE_LOGOUT = exports.RECEIVE_LOGOUT = "LOGOUT";
 var receiveLogout = function receiveLogout() {
   return {
     type: RECEIVE_LOGOUT
   };
 };
 
+var REQUEST_LOGOUT = exports.REQUEST_LOGOUT = "REQUEST_LOGOUT";
 var requestLogout = function requestLogout() {
   return {
     type: REQUEST_LOGOUT
@@ -24212,11 +24210,62 @@ var fetchLogout = exports.fetchLogout = function fetchLogout() {
   };
 };
 
-var addHashtag = exports.addHashtag = function addHashtag() {
+var ADD_HASHTAG = exports.ADD_HASHTAG = "ADD_HASHTAG";
+var requestAddHashtag = function requestAddHashtag(text, userId) {
   return {
     type: ADD_HASHTAG,
     text: text,
-    user_id: user_id
+    userId: userId
+  };
+};
+
+var RECEIVE_HASHTAG = exports.RECEIVE_HASHTAG = "RECEIVE_HASHTAG";
+var receiveHashtag = function receiveHashtag(json) {
+  return {
+    type: RECEIVE_HASHTAG,
+    json: json
+  };
+};
+
+var fetchAddHashtag = exports.fetchAddHashtag = function fetchAddHashtag(text, userId) {
+  return function (dispatch) {
+    dispatch(requestAddHashtag(text, userId));
+    (0, _isomorphicFetch2.default)("api/hashtags?text=" + text + "&user_id=" + userId, { method: "POST" }).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      return dispatch(receiveHashtag(json));
+    }).catch(function (error) {
+      return console.log(error);
+    });
+  };
+};
+
+var REQUEST_DELETE_HASHTAG = exports.REQUEST_DELETE_HASHTAG = "REQUEST_DELETE_HASHTAG";
+var requestDeleteHashtag = function requestDeleteHashtag(hashtagId) {
+  return {
+    type: REQUEST_DELETE_HASHTAG,
+    hashtagId: hashtagId
+  };
+};
+
+var RECEIVE_DELETE_HASHTAG = exports.RECEIVE_DELETE_HASHTAG = "RECEIVE_DELETE_HASHTAG";
+var receiveDeleteHashtag = function receiveDeleteHashtag(json) {
+  return {
+    type: RECEIVE_DELETE_HASHTAG,
+    json: json
+  };
+};
+
+var fetchDeleteHashtag = exports.fetchDeleteHashtag = function fetchDeleteHashtag(hashtagId) {
+  return function (dispatch) {
+    dispatch(requestDeleteHashtag(hashtagId));
+    (0, _isomorphicFetch2.default)("api/hashtags/" + hashtagId, { mathod: "DELETE" }).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      return dispatch(receiveDeleteHashtag(json));
+    }).catch(function (error) {
+      return console.log(error);
+    });
   };
 };
 
