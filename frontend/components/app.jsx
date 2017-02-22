@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { Provider } from "react-redux";
 import HeaderContainer from "./header_container";
+import BodyContainer from "./body_container";
 
-const App = ({store}) => {
-
+const App = (props) => {
   return (
-    <Provider store={store}>
-      <HeaderContainer/>
-    </Provider>
+    <div>
+      <HeaderContainer {...props}/>
+      <BodyContainer {...props}/>
+    </div>
   )
 }
 

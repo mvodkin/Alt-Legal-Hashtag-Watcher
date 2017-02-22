@@ -9451,22 +9451,22 @@ var _react = __webpack_require__(31);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(221);
-
 var _header_container = __webpack_require__(223);
 
 var _header_container2 = _interopRequireDefault(_header_container);
 
+var _body_container = __webpack_require__(229);
+
+var _body_container2 = _interopRequireDefault(_body_container);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var App = function App(_ref) {
-  var store = _ref.store;
-
-
+var App = function App(props) {
   return _react2.default.createElement(
-    _reactRedux.Provider,
-    { store: store },
-    _react2.default.createElement(_header_container2.default, null)
+    "div",
+    null,
+    _react2.default.createElement(_header_container2.default, props),
+    _react2.default.createElement(_body_container2.default, props)
   );
 };
 
@@ -21822,9 +21822,9 @@ var _reactDom = __webpack_require__(81);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _app = __webpack_require__(80);
+var _root = __webpack_require__(231);
 
-var _app2 = _interopRequireDefault(_app);
+var _root2 = _interopRequireDefault(_root);
 
 var _store = __webpack_require__(186);
 
@@ -21846,7 +21846,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.store = store;
 
-  _reactDom2.default.render(_react2.default.createElement(_app2.default, { store: store }), root);
+  _reactDom2.default.render(_react2.default.createElement(_root2.default, { store: store }), root);
 });
 
 /***/ }),
@@ -24259,7 +24259,7 @@ var receiveDeleteHashtag = function receiveDeleteHashtag(json) {
 var fetchDeleteHashtag = exports.fetchDeleteHashtag = function fetchDeleteHashtag(hashtagId) {
   return function (dispatch) {
     dispatch(requestDeleteHashtag(hashtagId));
-    (0, _isomorphicFetch2.default)("api/hashtags/" + hashtagId, { mathod: "DELETE" }).then(function (response) {
+    (0, _isomorphicFetch2.default)("api/hashtags/" + hashtagId, { method: "DELETE" }).then(function (response) {
       return response.json();
     }).then(function (json) {
       return dispatch(receiveDeleteHashtag(json));
@@ -24744,6 +24744,196 @@ module.exports = self.fetch.bind(self);
   self.fetch.polyfill = true
 })(typeof self !== 'undefined' ? self : this);
 
+
+/***/ }),
+/* 228 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(31);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _hashtag_input = __webpack_require__(230);
+
+var _hashtag_input2 = _interopRequireDefault(_hashtag_input);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Body = function Body(props) {
+
+  return _react2.default.createElement(_hashtag_input2.default, props);
+};
+
+exports.default = Body;
+
+/***/ }),
+/* 229 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _reactRedux = __webpack_require__(221);
+
+var _body = __webpack_require__(228);
+
+var _body2 = _interopRequireDefault(_body);
+
+var _actions = __webpack_require__(225);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(_ref) {
+  var user = _ref.user;
+  return {
+    user: user
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    fetchAddHashtag: function fetchAddHashtag(text, userId) {
+      return dispatch((0, _actions.fetchAddHashtag)(text, userId));
+    },
+    fetchDeleteHashtag: function fetchDeleteHashtag(hashtagId) {
+      return dispatch((0, _actions.fetchDeleteHashtag)(hashtagId));
+    }
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_body2.default);
+
+/***/ }),
+/* 230 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(31);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var HashtagInput = function (_Component) {
+  _inherits(HashtagInput, _Component);
+
+  function HashtagInput(props) {
+    _classCallCheck(this, HashtagInput);
+
+    var _this = _possibleConstructorReturn(this, (HashtagInput.__proto__ || Object.getPrototypeOf(HashtagInput)).call(this, props));
+
+    _this.state = { hashtag: "" };
+    _this.handleChange = _this.handleChange.bind(_this);
+    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    return _this;
+  }
+
+  _createClass(HashtagInput, [{
+    key: "handleChange",
+    value: function handleChange() {
+      var _this2 = this;
+
+      return function (e) {
+        return _this2.setState({ hashtag: e.currentTarget.value });
+      };
+    }
+  }, {
+    key: "handleSubmit",
+    value: function handleSubmit(e) {
+      debugger;
+      e.preventDefault();
+      var userId = this.props.user.id;
+      var text = this.state.hashtag;
+      this.props.fetchAddHashtag(text, userId);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2.default.createElement(
+        "form",
+        { onSubmit: this.handleSubmit },
+        _react2.default.createElement("input", {
+          type: "text",
+          placeholder: "Add a hashtag",
+          onChange: this.handleChange()
+        })
+      );
+    }
+  }]);
+
+  return HashtagInput;
+}(_react.Component);
+
+exports.default = HashtagInput;
+
+/***/ }),
+/* 231 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(31);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(221);
+
+var _header_container = __webpack_require__(223);
+
+var _header_container2 = _interopRequireDefault(_header_container);
+
+var _body_container = __webpack_require__(229);
+
+var _body_container2 = _interopRequireDefault(_body_container);
+
+var _app = __webpack_require__(80);
+
+var _app2 = _interopRequireDefault(_app);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Root = function Root(_ref) {
+  var store = _ref.store;
+
+
+  return _react2.default.createElement(
+    _reactRedux.Provider,
+    { store: store },
+    _react2.default.createElement(_app2.default, null)
+  );
+};
+
+exports.default = Root;
 
 /***/ })
 /******/ ]);

@@ -59,7 +59,7 @@ const receiveDeleteHashtag = (json) => ({
 
 export const fetchDeleteHashtag = (hashtagId) => dispatch => {
   dispatch(requestDeleteHashtag(hashtagId));
-  fetch(`api/hashtags/${hashtagId}`, {mathod: "DELETE"})
+  fetch(`api/hashtags/${hashtagId}`, {method: "DELETE"})
     .then(response => response.json())
     .then(json => dispatch(receiveDeleteHashtag(json)))
     .catch(error => console.log(error));
