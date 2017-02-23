@@ -13,11 +13,11 @@ export default class HashtagInput extends Component {
   }
 
   handleSubmit(e) {
-    debugger
     e.preventDefault()
     const userId = this.props.user.id;
     const text = this.state.hashtag;
-    this.props.fetchAddHashtag(text, userId)
+    this.props.fetchAddHashtag(text, userId);
+    this.setState({hashtag: ""});
   }
 
   render() {
@@ -27,6 +27,7 @@ export default class HashtagInput extends Component {
           type="text"
           placeholder="Add a hashtag"
           onChange={this.handleChange()}
+          value={this.state.hashtag}
           ></input>
       </form>
     );

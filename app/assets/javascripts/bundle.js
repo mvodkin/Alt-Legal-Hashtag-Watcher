@@ -22977,6 +22977,10 @@ var userReducer = function userReducer() {
   switch (action.type) {
     case _actions.RECEIVE_LOGOUT:
       return {};
+    case _actions.RECEIVE_HASHTAG:
+      return Object.assign({}, state, {
+        hashtags: state.hashtags.concat(action.json)
+      });
     default:
       return state;
   }
@@ -24865,11 +24869,11 @@ var HashtagInput = function (_Component) {
   }, {
     key: "handleSubmit",
     value: function handleSubmit(e) {
-      debugger;
       e.preventDefault();
       var userId = this.props.user.id;
       var text = this.state.hashtag;
       this.props.fetchAddHashtag(text, userId);
+      this.setState({ hashtag: "" });
     }
   }, {
     key: "render",
@@ -24880,7 +24884,8 @@ var HashtagInput = function (_Component) {
         _react2.default.createElement("input", {
           type: "text",
           placeholder: "Add a hashtag",
-          onChange: this.handleChange()
+          onChange: this.handleChange(),
+          value: this.state.hashtag
         })
       );
     }
