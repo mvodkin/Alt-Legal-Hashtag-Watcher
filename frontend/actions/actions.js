@@ -1,4 +1,3 @@
-// import * as ApiUtil from "../util/api_util";
 import fetch from "isomorphic-fetch";
 
 export const REQUEST_CURRENT_USER = "REQUEST_CURRENT_USER";

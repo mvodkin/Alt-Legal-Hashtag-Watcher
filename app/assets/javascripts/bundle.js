@@ -21830,6 +21830,8 @@ var _store = __webpack_require__(186);
 
 var _store2 = _interopRequireDefault(_store);
 
+var _twitter_api_actions = __webpack_require__(233);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -21843,6 +21845,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   store = (0, _store2.default)(initialState);
+
+  store.dispatch((0, _twitter_api_actions.fetchSearchTweets)({
+    id: "6",
+    hashtag: "banana"
+  }));
 
   window.store = store;
 
@@ -22338,10 +22345,15 @@ var _user_reducer = __webpack_require__(205);
 
 var _user_reducer2 = _interopRequireDefault(_user_reducer);
 
+var _tweet_reducer = __webpack_require__(234);
+
+var _tweet_reducer2 = _interopRequireDefault(_tweet_reducer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = (0, _redux.combineReducers)({
-  user: _user_reducer2.default
+  user: _user_reducer2.default,
+  tweets: _tweet_reducer2.default
 });
 
 /***/ }),
@@ -22966,10 +22978,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _actions = __webpack_require__(225);
 
-var _nullUser = Object.freeze({
-  user: null
-});
-
 var userReducer = function userReducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var action = arguments[1];
@@ -22980,6 +22988,13 @@ var userReducer = function userReducer() {
     case _actions.RECEIVE_HASHTAG:
       return Object.assign({}, state, {
         hashtags: state.hashtags.concat(action.json)
+      });
+    case _actions.RECEIVE_DELETE_HASHTAG:
+      var newHashtags = state.hashtags;
+      var deleteIndex = state.indexOf(action.json);
+      newHashtags.splice(deleteIndex, 1);
+      return Object.assign({}, state, {
+        hashtags: newHashtags
       });
     default:
       return state;
@@ -24184,7 +24199,7 @@ var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var REQUEST_CURRENT_USER = exports.REQUEST_CURRENT_USER = "REQUEST_CURRENT_USER"; // import * as ApiUtil from "../util/api_util";
+var REQUEST_CURRENT_USER = exports.REQUEST_CURRENT_USER = "REQUEST_CURRENT_USER";
 var RECEIVE_CURRENT_USER = exports.RECEIVE_CURRENT_USER = "RECEIVE_CURRENT_USER";
 
 var REMOVE_HASHTAG = exports.REMOVE_HASHTAG = "REMOVE_HASHTAG";
@@ -24760,6 +24775,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _react = __webpack_require__(31);
 
 var _react2 = _interopRequireDefault(_react);
@@ -24768,11 +24785,26 @@ var _hashtag_input = __webpack_require__(230);
 
 var _hashtag_input2 = _interopRequireDefault(_hashtag_input);
 
+var _hashtag_feed = __webpack_require__(232);
+
+var _hashtag_feed2 = _interopRequireDefault(_hashtag_feed);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Body = function Body(props) {
 
-  return _react2.default.createElement(_hashtag_input2.default, props);
+  var renderHashtagFeeds = function renderHashtagFeeds() {
+    return props.user.hashtags.map(function (hashtag, idx) {
+      return _react2.default.createElement(_hashtag_feed2.default, _extends({ key: idx }, hashtag));
+    });
+  };
+
+  return _react2.default.createElement(
+    "main",
+    null,
+    renderHashtagFeeds(),
+    _react2.default.createElement(_hashtag_input2.default, props)
+  );
 };
 
 exports.default = Body;
@@ -24939,6 +24971,163 @@ var Root = function Root(_ref) {
 };
 
 exports.default = Root;
+
+/***/ }),
+/* 232 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(31);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var HashtagFeed = function (_Component) {
+  _inherits(HashtagFeed, _Component);
+
+  function HashtagFeed(props) {
+    _classCallCheck(this, HashtagFeed);
+
+    return _possibleConstructorReturn(this, (HashtagFeed.__proto__ || Object.getPrototypeOf(HashtagFeed)).call(this, props));
+  }
+
+  _createClass(HashtagFeed, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var element = document.getElementById(this.props.id);
+      element.innerHTML = "<blockquote class=\"twitter-tweet\"><p>Why I joined Twitter - Andy Piper <a href=\"https://twitter.com/andypiper\">@andypiper</a>, Developer Advocate <a href=\"https://t.co/fQ796U9lq1\">https://t.co/fQ796U9lq1</a></p>\u2014 TwitterDev (@TwitterDev) <a href=\"https://twitter.com/TwitterDev/statuses/482281320232415232\">June 26, 2014</a></blockquote>\n<script async src=\"//platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>";
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _props = this.props,
+          hashtag = _props.hashtag,
+          id = _props.id;
+
+      return _react2.default.createElement(
+        "section",
+        null,
+        _react2.default.createElement(
+          "div",
+          null,
+          _react2.default.createElement(
+            "h3",
+            null,
+            hashtag
+          ),
+          _react2.default.createElement("div", { id: id })
+        )
+      );
+    }
+  }]);
+
+  return HashtagFeed;
+}(_react.Component);
+
+exports.default = HashtagFeed;
+
+/***/ }),
+/* 233 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.fetchSearchTweets = exports.RECEIVE_TWEETS = exports.REQUEST_TWEETS = undefined;
+
+var _isomorphicFetch = __webpack_require__(226);
+
+var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var REQUEST_TWEETS = exports.REQUEST_TWEETS = "REQUEST_TWEETS";
+var requestTweets = function requestTweets() {
+  return {
+    type: REQUEST_TWEETS
+  };
+};
+
+var RECEIVE_TWEETS = exports.RECEIVE_TWEETS = "RECEIVE_TWEETS";
+var receiveTweets = function receiveTweets(json, hashtag) {
+  return {
+    type: RECEIVE_TWEETS,
+    json: json,
+    hashtag: hashtag
+  };
+};
+
+var buildQueryString = function buildQueryString(object) {
+  var params = [];
+  for (var key in object) {
+    params.push(key + "=" + object[key]);
+  }
+  return params.join("&");
+};
+
+var fetchSearchTweets = exports.fetchSearchTweets = function fetchSearchTweets(params) {
+  return function (dispatch) {
+    dispatch(requestTweets());
+    (0, _isomorphicFetch2.default)("/api/tweets?" + buildQueryString(params)).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      return dispatch(receiveTweets(json, params.hashtag));
+    }).catch(function (error) {
+      return console.log(error);
+    });
+  };
+};
+
+/***/ }),
+/* 234 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _twitter_api_actions = __webpack_require__(233);
+
+var tweetReducer = function tweetReducer() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var action = arguments[1];
+
+  switch (action.type) {
+    case _twitter_api_actions.RECEIVE_TWEETS:
+      var hashtag = action.hashtag,
+          json = action.json;
+
+      var obj = {};
+      obj[hashtag] = json;
+      return Object.assign({}, state, obj);
+    default:
+      return state;
+
+  }
+};
+
+exports.default = tweetReducer;
 
 /***/ })
 /******/ ]);

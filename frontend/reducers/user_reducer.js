@@ -1,11 +1,8 @@
 import {
   RECEIVE_LOGOUT,
-  RECEIVE_HASHTAG
+  RECEIVE_HASHTAG,
+  RECEIVE_DELETE_HASHTAG
 } from "../actions/actions"
-
-const _nullUser = Object.freeze({
-  user: null,
-});
 
 const userReducer = (state = {}, action) => {
   switch (action.type) {
@@ -14,7 +11,14 @@ const userReducer = (state = {}, action) => {
     case RECEIVE_HASHTAG:
       return Object.assign({}, state, {
         hashtags: state.hashtags.concat(action.json)
-      })
+      });
+    case RECEIVE_DELETE_HASHTAG:
+      let newHashtags = state.hashtags;
+      let deleteIndex = state.indexOf(action.json)
+      newHashtags.splice(deleteIndex, 1);
+      return Object.assign({}, state, {
+        hashtags: newHashtags
+      });
     default:
       return state;
   }
