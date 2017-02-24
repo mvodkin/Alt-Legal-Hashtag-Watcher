@@ -22986,7 +22986,14 @@ var userReducer = function userReducer() {
       });
     case _actions.RECEIVE_DELETE_HASHTAG:
       var newHashtags = state.hashtags;
-      var deleteIndex = newHashtags.indexOf(action.json);
+      var deleteIndex = void 0;
+
+      newHashtags.forEach(function (el, idx) {
+        if (action.json.id === el.id) {
+          deleteIndex = idx;
+        }
+      });
+
       newHashtags.splice(deleteIndex, 1);
       return Object.assign({}, state, {
         hashtags: newHashtags
@@ -24794,11 +24801,21 @@ var Body = function Body(props) {
     });
   };
 
+  var renderHashtagInput = function renderHashtagInput() {
+    if (props.user.hashtags.length < 3) {
+      return _react2.default.createElement(_hashtag_input2.default, props);
+    }
+  };
+
   return _react2.default.createElement(
     "main",
     null,
-    renderHashtagFeeds(),
-    _react2.default.createElement(_hashtag_input2.default, props)
+    _react2.default.createElement(
+      "div",
+      null,
+      renderHashtagFeeds(),
+      renderHashtagInput()
+    )
   );
 };
 
@@ -24916,6 +24933,7 @@ var HashtagInput = function (_Component) {
         "form",
         { onSubmit: this.handleSubmit },
         _react2.default.createElement("input", {
+          className: "hashtag-input",
           type: "text",
           placeholder: "Add a hashtag",
           onChange: this.handleChange(),
@@ -25008,22 +25026,35 @@ var HashtagFeed = function (_Component) {
     var _this = _possibleConstructorReturn(this, (HashtagFeed.__proto__ || Object.getPrototypeOf(HashtagFeed)).call(this, props));
 
     _this.handleDeleteHashtag = _this.handleDeleteHashtag.bind(_this);
+    _this.handleFetchTweets = _this.handleFetchTweets.bind(_this);
+    _this._loadTweets = _this._loadTweets.bind(_this);
     return _this;
   }
 
   _createClass(HashtagFeed, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-
+      this.handleFetchTweets();
+      setInterval(this.handleFetchTweets, 60000);
+    }
+  }, {
+    key: "handleFetchTweets",
+    value: function handleFetchTweets() {
       this.props.fetchSearchTweets({
         id: this.props.user.id,
         hashtag: this.props.hashtag.text
       });
     }
   }, {
-    key: "returnTweetHTML",
-    value: function returnTweetHTML(string) {
+    key: "_returnTweetHTML",
+    value: function _returnTweetHTML(string) {
       return { __html: string };
+    }
+  }, {
+    key: "_loadTweets",
+    value: function _loadTweets() {
+      var element = document.getElementById(this.props.hashtag.id);
+      if (twttr.widgets) twttr.widgets.load(element);
     }
   }, {
     key: "renderTweets",
@@ -25031,21 +25062,20 @@ var HashtagFeed = function (_Component) {
       var _this2 = this;
 
       var tweets = this.props.tweets[this.props.hashtag.text];
-
       var tweetElements = void 0;
-      if (tweets) {
-        tweetElements = tweets.map(function (tweet, idx) {
+
+      if (tweets && tweets.isFetching) {
+        tweetElements = _react2.default.createElement("div", { className: "feed-spinner" });
+      } else if (tweets && tweets.items) {
+        tweetElements = tweets.items.map(function (tweet, idx) {
           return _react2.default.createElement("li", {
             key: idx,
-            dangerouslySetInnerHTML: _this2.returnTweetHTML(JSON.parse(tweet).html)
+            dangerouslySetInnerHTML: _this2._returnTweetHTML(JSON.parse(tweet).html)
           });
         });
       }
 
-      setTimeout(function () {
-        var element = document.getElementById(_this2.props.hashtag.id);
-        if (twttr.widgets) twttr.widgets.load(element);
-      }, 50);
+      setTimeout(this._loadTweets, 50);
 
       return tweetElements;
     }
@@ -25077,7 +25107,7 @@ var HashtagFeed = function (_Component) {
             "div",
             { className: "watchlist-options" },
             _react2.default.createElement("div", { className: "options" }),
-            _react2.default.createElement("div", { className: "refresh" }),
+            _react2.default.createElement("div", { className: "refresh", onClick: this.handleFetchTweets }),
             _react2.default.createElement("div", { className: "delete", onClick: this.handleDeleteHashtag })
           )
         ),
@@ -25114,9 +25144,10 @@ var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var REQUEST_TWEETS = exports.REQUEST_TWEETS = "REQUEST_TWEETS";
-var requestTweets = function requestTweets() {
+var requestTweets = function requestTweets(hashtag) {
   return {
-    type: REQUEST_TWEETS
+    type: REQUEST_TWEETS,
+    hashtag: hashtag
   };
 };
 
@@ -25141,7 +25172,7 @@ var setTweetWidth = function setTweetWidth() {};
 
 var fetchSearchTweets = exports.fetchSearchTweets = function fetchSearchTweets(params) {
   return function (dispatch) {
-    dispatch(requestTweets());
+    dispatch(requestTweets(params.hashtag));
     (0, _isomorphicFetch2.default)("/api/tweets?" + buildQueryString(params)).then(function (response) {
       return response.json();
     }).then(function (json) {
@@ -25169,13 +25200,20 @@ var tweetReducer = function tweetReducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var action = arguments[1];
 
+  var obj = {};
+
   switch (action.type) {
     case _twitter_api_actions.RECEIVE_TWEETS:
       var hashtag = action.hashtag,
           json = action.json;
 
-      var obj = {};
-      obj[hashtag] = json;
+      obj[action.hashtag] = {};
+      obj[hashtag].items = json;
+      obj[hashtag].isFetching = false;
+      return Object.assign({}, state, obj);
+    case _twitter_api_actions.REQUEST_TWEETS:
+      obj[action.hashtag] = {};
+      obj[action.hashtag].isFetching = true;
       return Object.assign({}, state, obj);
     default:
       return state;

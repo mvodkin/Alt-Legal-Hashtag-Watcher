@@ -5,38 +5,48 @@ class HashtagFeed extends Component {
     super(props)
 
     this.handleDeleteHashtag = this.handleDeleteHashtag.bind(this);
+    this.handleFetchTweets = this.handleFetchTweets.bind(this);
+    this._loadTweets = this._loadTweets.bind(this);
   }
 
   componentDidMount() {
+    this.handleFetchTweets()
+    setInterval(this.handleFetchTweets, 60000)
+  }
 
+  handleFetchTweets() {
     this.props.fetchSearchTweets({
       id: this.props.user.id,
       hashtag: this.props.hashtag.text
     })
   }
 
-  returnTweetHTML(string) {
+  _returnTweetHTML(string) {
     return { __html: string }
+  }
+
+  _loadTweets() {
+    const element = document.getElementById(this.props.hashtag.id);
+    if (twttr.widgets) twttr.widgets.load(element);
   }
 
   renderTweets() {
     const tweets = this.props.tweets[this.props.hashtag.text];
-
     let tweetElements;
-    if (tweets) {
-      tweetElements = tweets.map((tweet, idx) => (
+
+    if (tweets && tweets.isFetching) {
+      tweetElements = <div className="feed-spinner"></div>
+    } else if (tweets && tweets.items) {
+      tweetElements = tweets.items.map((tweet, idx) => (
         <li
           key={idx}
-          dangerouslySetInnerHTML={this.returnTweetHTML(JSON.parse(tweet).html)}
+          dangerouslySetInnerHTML={this._returnTweetHTML(JSON.parse(tweet).html)}
           >
         </li>
       ));
     }
 
-    setTimeout(() => {
-      const element = document.getElementById(this.props.hashtag.id);
-      if (twttr.widgets) twttr.widgets.load(element);
-    }, 50)
+    setTimeout(this._loadTweets, 50)
 
     return tweetElements;
 
@@ -54,7 +64,7 @@ class HashtagFeed extends Component {
           <h3>#{text}</h3>
           <div className="watchlist-options">
             <div className="options"></div>
-            <div className="refresh"></div>
+            <div className="refresh" onClick={this.handleFetchTweets}></div>
             <div className="delete" onClick={this.handleDeleteHashtag}></div>
           </div>
         </div>

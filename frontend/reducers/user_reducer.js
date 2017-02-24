@@ -14,7 +14,14 @@ const userReducer = (state = {}, action) => {
       });
     case RECEIVE_DELETE_HASHTAG:
       let newHashtags = state.hashtags;
-      let deleteIndex = newHashtags.indexOf(action.json)
+      let deleteIndex;
+
+      newHashtags.forEach((el, idx) => {
+        if (action.json.id === el.id) {
+          deleteIndex = idx;
+        }
+      })
+
       newHashtags.splice(deleteIndex, 1);
       return Object.assign({}, state, {
         hashtags: newHashtags

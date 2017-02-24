@@ -8,10 +8,18 @@ const Body = (props) => {
     props.user.hashtags.map((hashtag, idx) => <HashtagFeed key={idx} {...props} hashtag={hashtag}/>)
   );
 
+  const renderHashtagInput = () => {
+    if (props.user.hashtags.length < 3) {
+      return <HashtagInput {...props}/>
+    }
+  }
+
   return (
     <main>
-      {renderHashtagFeeds()}
-      <HashtagInput {...props}/>
+      <div>
+        {renderHashtagFeeds()}
+        {renderHashtagInput()}
+      </div>
     </main>
   )
 }

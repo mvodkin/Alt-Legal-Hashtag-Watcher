@@ -24,6 +24,7 @@ export default class HashtagInput extends Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <input
+          className="hashtag-input"
           type="text"
           placeholder="Add a hashtag"
           onChange={this.handleChange()}
