@@ -93,3 +93,20 @@ header {
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
 }
+
+.dropdown {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  position: absolute;
+  top: 100%;
+  right: 6.5%;
+  border: 1px solid #afafad;
+  padding: 8px 10px 8px 10px;
+  background-color: white;
+  max-width: 160px;
+  min-width: 120px;
+  cursor: pointer;
+}
+
+.dropdown:hover {
+  background-color: #f5f5f5;
+}

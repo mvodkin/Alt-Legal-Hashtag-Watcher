@@ -1,17 +1,22 @@
 import React, {Component} from 'react';
+import Modal from 'react-modal';
 
 class HashtagFeed extends Component {
   constructor(props) {
     super(props)
 
+    this.state = { modalOpen: false }
+
     this.handleDeleteHashtag = this.handleDeleteHashtag.bind(this);
     this.handleFetchTweets = this.handleFetchTweets.bind(this);
     this._loadTweets = this._loadTweets.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
     this.handleFetchTweets()
-    setInterval(this.handleFetchTweets, 60000)
+    setInterval(this.handleFetchTweets, 100000)
   }
 
   handleFetchTweets() {
@@ -28,6 +33,14 @@ class HashtagFeed extends Component {
   _loadTweets() {
     const element = document.getElementById(this.props.hashtag.id);
     if (twttr.widgets) twttr.widgets.load(element);
+  }
+
+  openModal() {
+    this.setState({ modalOpen: true })
+  }
+
+  closeModal() {
+    this.setState({ modalOpen: false })
   }
 
   renderTweets() {
@@ -60,10 +73,17 @@ class HashtagFeed extends Component {
     const {text, id} = this.props.hashtag
     return (
       <section>
+        <Modal
+          onRequestClose={this.closeModal}
+          isOpen={this.state.modalOpen}
+          contentLabel="Options modal"
+          >
+
+        </Modal>
         <div className="watchlist-header">
           <h3>#{text}</h3>
           <div className="watchlist-options">
-            <div className="options"></div>
+            <div className="options" onClick={this.openModal}></div>
             <div className="refresh" onClick={this.handleFetchTweets}></div>
             <div className="delete" onClick={this.handleDeleteHashtag}></div>
           </div>
@@ -71,6 +91,7 @@ class HashtagFeed extends Component {
         <ul id={id} className="watchlist-feed">
           {this.renderTweets()}
         </ul>
+
       </section>
     );
   }

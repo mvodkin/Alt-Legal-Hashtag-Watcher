@@ -4,21 +4,41 @@ class Header extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      dropDownDisplay: 'none'
+    };
+
     this.handleLogout = this.handleLogout.bind(this);
+    this.showDropdown = this.showDropdown.bind(this);
+  }
+
+  componentDidMount() {
+    document.querySelector("html").addEventListener("click", () => {
+      this.setState({ dropDownDisplay: 'none'})
+    })
   }
 
   handleLogout() {
     this.props.logout(this.props.user.id);
   }
 
+  showDropdown() {
+    this.setState({ dropDownDisplay: 'block' })
+  }
+
   renderUser() {
     const { name, image } = this.props.user;
     if (name) {
       return (
-        <div>
+        <div onClick={this.showDropdown}>
           <img src={image}></img>
-          <span onClick={this.handleLogout}>{name}</span>
+          <span>{name}</span>
           <span className="caret"></span>
+          <span
+            className="dropdown"
+            onClick={this.handleLogout}
+            style={{display: this.state.dropDownDisplay}}
+            >Sign Out</span>
         </div>
       )
     } else {

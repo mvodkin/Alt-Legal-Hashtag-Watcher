@@ -22,6 +22,10 @@ const Body = (props) => {
           {renderHashtagInput()}
         </div>
       )
+    } else {
+      return (
+        <div className="login-message">Log in with  <a href="/auth/twitter">Twitter</a></div>
+      )
     }
   }
 

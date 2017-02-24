@@ -101,3 +101,14 @@ section:last-child {
   width: 120px;
   height: 120px;
 }
+
+.login-message {
+  font-size: 24px;
+  font-weight: bold;
+  padding-top: 100px;
+}
+
+.login-message > a {
+  text-decoration: underline;
+  margin-left: 2px;
+}

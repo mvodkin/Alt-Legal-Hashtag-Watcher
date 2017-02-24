@@ -2,6 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import Root from "./components/root";
 import configureStore from "./store/store";
+import Modal from "react-modal";
 import { fetchSearchTweets } from "./actions/twitter_api_actions";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -15,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   store = configureStore(initialState);
+
+  Modal.setAppElement(root);
 
   window.store = store
 
