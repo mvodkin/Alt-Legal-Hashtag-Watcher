@@ -1,0 +1,66 @@
+html, body, header, nav, h1, a, ul, li,
+strong, main, section, img, div, h2, h4, h3, p,
+form, fieldset, label, input, textarea,
+button, article, footer, small {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  box-sizing: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  vertical-align: inherit;
+  color: inherit;
+  background: transparent;
+  list-style: none;
+}
+
+
+main {
+  font-family: "lato", "helvetica", sans-serif;
+  color: #605E5E;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: auto;
+  margin: 0 auto;
+}
+
+section {
+  width: auto;
+  align-items: center;
+  border: 1px solid #dddddd;
+  margin: 20px 0 20px 20px;
+}
+
+section:last-child {
+  margin: 0 20px 0 0;
+}
+
+.watchlist-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px 10px 10px 10px;
+  border-bottom: 1px solid #dddddd;
+}
+
+.watchlist-feed {
+  padding: 10px 10px 10px 10px;
+}
+
+.watchlist-options > div {
+  height: 24px;
+  width: 24px;
+  margin-left: 5px;
+}
+
+.watchlist-options {
+  display: flex;
+  flex-direction: row;
+}
+
+.delete { background-image: image-url("ic_clear_black_24px.svg"); }
+.refresh { background-image: image-url("ic_refresh_black_24px.svg"); }
+.options { background-image: image-url("ic_more_horiz_black_24px.svg"); }

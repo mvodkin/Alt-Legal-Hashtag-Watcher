@@ -16,11 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   store = configureStore(initialState);
 
-  store.dispatch(fetchSearchTweets({
-    id: "6",
-    hashtag: "banana"
-  }))
-
   window.store = store
 
   ReactDom.render(<Root store={store}/>, root)

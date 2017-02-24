@@ -3,21 +3,64 @@ import React, {Component} from 'react';
 class HashtagFeed extends Component {
   constructor(props) {
     super(props)
+
+    this.handleDeleteHashtag = this.handleDeleteHashtag.bind(this);
   }
 
   componentDidMount() {
-    const element = document.getElementById(this.props.id)
-    element.innerHTML = "\u003Cblockquote class=\"twitter-tweet\"\u003E\u003Cp\u003EWhy I joined Twitter - Andy Piper \u003Ca href=\"https:\/\/twitter.com\/andypiper\"\u003E@andypiper\u003C\/a\u003E, Developer Advocate \u003Ca href=\"https:\/\/t.co\/fQ796U9lq1\"\u003Ehttps:\/\/t.co\/fQ796U9lq1\u003C\/a\u003E\u003C\/p\u003E— TwitterDev (@TwitterDev) \u003Ca href=\"https:\/\/twitter.com\/TwitterDev\/statuses\/482281320232415232\"\u003EJune 26, 2014\u003C\/a\u003E\u003C\/blockquote\u003E\n\u003Cscript async src=\"\/\/platform.twitter.com\/widgets.js\" charset=\"utf-8\"\u003E\u003C\/script\u003E"
+
+    this.props.fetchSearchTweets({
+      id: this.props.user.id,
+      hashtag: this.props.hashtag.text
+    })
+  }
+
+  returnTweetHTML(string) {
+    return { __html: string }
+  }
+
+  renderTweets() {
+    const tweets = this.props.tweets[this.props.hashtag.text];
+
+    let tweetElements;
+    if (tweets) {
+      tweetElements = tweets.map((tweet, idx) => (
+        <li
+          key={idx}
+          dangerouslySetInnerHTML={this.returnTweetHTML(JSON.parse(tweet).html)}
+          >
+        </li>
+      ));
+    }
+
+    setTimeout(() => {
+      const element = document.getElementById(this.props.hashtag.id);
+      if (twttr.widgets) twttr.widgets.load(element);
+    }, 50)
+
+    return tweetElements;
+
+  }
+
+  handleDeleteHashtag() {
+    this.props.fetchDeleteHashtag(this.props.hashtag.id)
   }
 
   render() {
-    const {hashtag, id} = this.props
+    const {text, id} = this.props.hashtag
     return (
       <section>
-        <div>
-          <h3>{hashtag}</h3>
-          <div id={id}></div>
+        <div className="watchlist-header">
+          <h3>#{text}</h3>
+          <div className="watchlist-options">
+            <div className="options"></div>
+            <div className="refresh"></div>
+            <div className="delete" onClick={this.handleDeleteHashtag}></div>
+          </div>
         </div>
+        <ul id={id} className="watchlist-feed">
+          {this.renderTweets()}
+        </ul>
       </section>
     );
   }

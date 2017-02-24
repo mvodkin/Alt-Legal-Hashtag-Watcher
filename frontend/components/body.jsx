@@ -5,7 +5,7 @@ import HashtagFeed from "./hashtag_feed";
 const Body = (props) => {
 
   const renderHashtagFeeds = () => (
-    props.user.hashtags.map((hashtag, idx) => <HashtagFeed key={idx} {...hashtag}/>)
+    props.user.hashtags.map((hashtag, idx) => <HashtagFeed key={idx} {...props} hashtag={hashtag}/>)
   );
 
   return (

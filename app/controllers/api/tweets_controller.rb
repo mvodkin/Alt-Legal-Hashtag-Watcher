@@ -10,9 +10,9 @@ class Api::TweetsController < ApplicationController
     end
 
 
-    @tweets = client.search(params[:hashtag], lang: "en").take(5)
+    @tweets = client.search("##{params[:hashtag]}", lang: "en").take(5)
     @embeded_tweets = @tweets.map do |tweet|
-      client.oembed(tweet.id).to_json
+      client.oembed(tweet.id, hide_media: true, maxwidth: 400).to_json
     end
 
     if (@embeded_tweets)

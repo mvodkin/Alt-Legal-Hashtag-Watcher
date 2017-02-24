@@ -21846,11 +21846,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   store = (0, _store2.default)(initialState);
 
-  store.dispatch((0, _twitter_api_actions.fetchSearchTweets)({
-    id: "6",
-    hashtag: "banana"
-  }));
-
   window.store = store;
 
   _reactDom2.default.render(_react2.default.createElement(_root2.default, { store: store }), root);
@@ -22991,7 +22986,7 @@ var userReducer = function userReducer() {
       });
     case _actions.RECEIVE_DELETE_HASHTAG:
       var newHashtags = state.hashtags;
-      var deleteIndex = state.indexOf(action.json);
+      var deleteIndex = newHashtags.indexOf(action.json);
       newHashtags.splice(deleteIndex, 1);
       return Object.assign({}, state, {
         hashtags: newHashtags
@@ -24795,7 +24790,7 @@ var Body = function Body(props) {
 
   var renderHashtagFeeds = function renderHashtagFeeds() {
     return props.user.hashtags.map(function (hashtag, idx) {
-      return _react2.default.createElement(_hashtag_feed2.default, _extends({ key: idx }, hashtag));
+      return _react2.default.createElement(_hashtag_feed2.default, _extends({ key: idx }, props, { hashtag: hashtag }));
     });
   };
 
@@ -24826,14 +24821,18 @@ var _body = __webpack_require__(228);
 
 var _body2 = _interopRequireDefault(_body);
 
+var _twitter_api_actions = __webpack_require__(233);
+
 var _actions = __webpack_require__(225);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var mapStateToProps = function mapStateToProps(_ref) {
-  var user = _ref.user;
+  var user = _ref.user,
+      tweets = _ref.tweets;
   return {
-    user: user
+    user: user,
+    tweets: tweets
   };
 };
 
@@ -24844,6 +24843,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     },
     fetchDeleteHashtag: function fetchDeleteHashtag(hashtagId) {
       return dispatch((0, _actions.fetchDeleteHashtag)(hashtagId));
+    },
+    fetchSearchTweets: function fetchSearchTweets(params) {
+      return dispatch((0, _twitter_api_actions.fetchSearchTweets)(params));
     }
   };
 };
@@ -25003,34 +25005,86 @@ var HashtagFeed = function (_Component) {
   function HashtagFeed(props) {
     _classCallCheck(this, HashtagFeed);
 
-    return _possibleConstructorReturn(this, (HashtagFeed.__proto__ || Object.getPrototypeOf(HashtagFeed)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (HashtagFeed.__proto__ || Object.getPrototypeOf(HashtagFeed)).call(this, props));
+
+    _this.handleDeleteHashtag = _this.handleDeleteHashtag.bind(_this);
+    return _this;
   }
 
   _createClass(HashtagFeed, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var element = document.getElementById(this.props.id);
-      element.innerHTML = "<blockquote class=\"twitter-tweet\"><p>Why I joined Twitter - Andy Piper <a href=\"https://twitter.com/andypiper\">@andypiper</a>, Developer Advocate <a href=\"https://t.co/fQ796U9lq1\">https://t.co/fQ796U9lq1</a></p>\u2014 TwitterDev (@TwitterDev) <a href=\"https://twitter.com/TwitterDev/statuses/482281320232415232\">June 26, 2014</a></blockquote>\n<script async src=\"//platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>";
+
+      this.props.fetchSearchTweets({
+        id: this.props.user.id,
+        hashtag: this.props.hashtag.text
+      });
+    }
+  }, {
+    key: "returnTweetHTML",
+    value: function returnTweetHTML(string) {
+      return { __html: string };
+    }
+  }, {
+    key: "renderTweets",
+    value: function renderTweets() {
+      var _this2 = this;
+
+      var tweets = this.props.tweets[this.props.hashtag.text];
+
+      var tweetElements = void 0;
+      if (tweets) {
+        tweetElements = tweets.map(function (tweet, idx) {
+          return _react2.default.createElement("li", {
+            key: idx,
+            dangerouslySetInnerHTML: _this2.returnTweetHTML(JSON.parse(tweet).html)
+          });
+        });
+      }
+
+      setTimeout(function () {
+        var element = document.getElementById(_this2.props.hashtag.id);
+        if (twttr.widgets) twttr.widgets.load(element);
+      }, 50);
+
+      return tweetElements;
+    }
+  }, {
+    key: "handleDeleteHashtag",
+    value: function handleDeleteHashtag() {
+      this.props.fetchDeleteHashtag(this.props.hashtag.id);
     }
   }, {
     key: "render",
     value: function render() {
-      var _props = this.props,
-          hashtag = _props.hashtag,
-          id = _props.id;
+      var _props$hashtag = this.props.hashtag,
+          text = _props$hashtag.text,
+          id = _props$hashtag.id;
 
       return _react2.default.createElement(
         "section",
         null,
         _react2.default.createElement(
           "div",
-          null,
+          { className: "watchlist-header" },
           _react2.default.createElement(
             "h3",
             null,
-            hashtag
+            "#",
+            text
           ),
-          _react2.default.createElement("div", { id: id })
+          _react2.default.createElement(
+            "div",
+            { className: "watchlist-options" },
+            _react2.default.createElement("div", { className: "options" }),
+            _react2.default.createElement("div", { className: "refresh" }),
+            _react2.default.createElement("div", { className: "delete", onClick: this.handleDeleteHashtag })
+          )
+        ),
+        _react2.default.createElement(
+          "ul",
+          { id: id, className: "watchlist-feed" },
+          this.renderTweets()
         )
       );
     }
@@ -25082,6 +25136,8 @@ var buildQueryString = function buildQueryString(object) {
   }
   return params.join("&");
 };
+
+var setTweetWidth = function setTweetWidth() {};
 
 var fetchSearchTweets = exports.fetchSearchTweets = function fetchSearchTweets(params) {
   return function (dispatch) {
