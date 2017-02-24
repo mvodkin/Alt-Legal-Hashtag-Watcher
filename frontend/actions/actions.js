@@ -15,9 +15,9 @@ const requestLogout = () => ({
   type: REQUEST_LOGOUT
 });
 
-export const fetchLogout = () => dispatch => {
+export const fetchLogout = (userId) => dispatch => {
   dispatch(requestLogout());
-  fetch("/logout")
+  fetch(`/logout?id=${userId}`)
     .then(() => dispatch(receiveLogout()))
     .catch(error => console.log(error));
 };

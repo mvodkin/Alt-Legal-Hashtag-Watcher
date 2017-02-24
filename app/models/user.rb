@@ -16,7 +16,7 @@
 
 class User < ActiveRecord::Base
 
-  after_initialize :ensure_session_token
+  # after_initialize :ensure_session_token
 
   has_one :watchlist
 

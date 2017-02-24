@@ -9513,10 +9513,18 @@ var Header = function (_Component) {
   function Header(props) {
     _classCallCheck(this, Header);
 
-    return _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
+
+    _this.handleLogout = _this.handleLogout.bind(_this);
+    return _this;
   }
 
   _createClass(Header, [{
+    key: "handleLogout",
+    value: function handleLogout() {
+      this.props.logout(this.props.user.id);
+    }
+  }, {
     key: "renderUser",
     value: function renderUser() {
       var _props$user = this.props.user,
@@ -9530,7 +9538,7 @@ var Header = function (_Component) {
           _react2.default.createElement("img", { src: image }),
           _react2.default.createElement(
             "span",
-            { onClick: this.props.logout },
+            { onClick: this.handleLogout },
             name
           ),
           _react2.default.createElement("span", { className: "caret" })
@@ -24145,8 +24153,8 @@ var mapStateToProps = function mapStateToProps(_ref) {
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    logout: function logout() {
-      return dispatch((0, _actions.fetchLogout)());
+    logout: function logout(userId) {
+      return dispatch((0, _actions.fetchLogout)(userId));
     }
   };
 };
@@ -24220,10 +24228,10 @@ var requestLogout = function requestLogout() {
   };
 };
 
-var fetchLogout = exports.fetchLogout = function fetchLogout() {
+var fetchLogout = exports.fetchLogout = function fetchLogout(userId) {
   return function (dispatch) {
     dispatch(requestLogout());
-    (0, _isomorphicFetch2.default)("/logout").then(function () {
+    (0, _isomorphicFetch2.default)("/logout?id=" + userId).then(function () {
       return dispatch(receiveLogout());
     }).catch(function (error) {
       return console.log(error);
@@ -24807,15 +24815,21 @@ var Body = function Body(props) {
     }
   };
 
+  var renderIfLoggedIn = function renderIfLoggedIn() {
+    if (props.user.id) {
+      return _react2.default.createElement(
+        "div",
+        null,
+        renderHashtagFeeds(),
+        renderHashtagInput()
+      );
+    }
+  };
+
   return _react2.default.createElement(
     "main",
     null,
-    _react2.default.createElement(
-      "div",
-      null,
-      renderHashtagFeeds(),
-      renderHashtagInput()
-    )
+    renderIfLoggedIn()
   );
 };
 

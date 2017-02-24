@@ -11,7 +11,10 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    current_user.reset_session_token
+    # session[:uhh] = "wake up!"
+    # current_user.reset_session_token
+    @user = User.find(params[:id])
+    @user.reset_session_token
     session[:session_token] = nil
     render json: {}, status: 200
   end

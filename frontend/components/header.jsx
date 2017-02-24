@@ -3,6 +3,12 @@ import React, { Component } from "react";
 class Header extends Component {
   constructor(props) {
     super(props);
+
+    this.handleLogout = this.handleLogout.bind(this);
+  }
+
+  handleLogout() {
+    this.props.logout(this.props.user.id);
   }
 
   renderUser() {
@@ -11,7 +17,7 @@ class Header extends Component {
       return (
         <div>
           <img src={image}></img>
-          <span onClick={this.props.logout}>{name}</span>
+          <span onClick={this.handleLogout}>{name}</span>
           <span className="caret"></span>
         </div>
       )

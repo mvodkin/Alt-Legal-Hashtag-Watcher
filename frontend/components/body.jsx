@@ -14,12 +14,20 @@ const Body = (props) => {
     }
   }
 
+  const renderIfLoggedIn = () => {
+    if (props.user.id) {
+      return (
+        <div>
+          {renderHashtagFeeds()}
+          {renderHashtagInput()}
+        </div>
+      )
+    }
+  }
+
   return (
     <main>
-      <div>
-        {renderHashtagFeeds()}
-        {renderHashtagInput()}
-      </div>
+      {renderIfLoggedIn()}
     </main>
   )
 }
