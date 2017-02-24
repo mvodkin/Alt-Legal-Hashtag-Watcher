@@ -8,10 +8,11 @@ const requestTweets = (hashtag) => ({
 });
 
 export const RECEIVE_TWEETS = "RECEIVE_TWEETS";
-const receiveTweets = (json, hashtag) => ({
+const receiveTweets = (json, hashtag, numberOfTweets) => ({
   type: RECEIVE_TWEETS,
   json,
-  hashtag
+  hashtag,
+  numberOfTweets
 });
 
 const buildQueryString = (object) => {
@@ -30,6 +31,6 @@ export const fetchSearchTweets = (params) => dispatch => {
   dispatch(requestTweets(params.hashtag));
   fetch(`/api/tweets?${buildQueryString(params)}`)
     .then(response => response.json())
-    .then(json => dispatch(receiveTweets(json, params.hashtag)))
+    .then(json => dispatch(receiveTweets(json, params.hashtag, params.number_of_tweets)))
     .catch(error => console.log(error));
 }

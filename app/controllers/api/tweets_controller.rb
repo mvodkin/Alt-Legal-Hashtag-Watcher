@@ -14,7 +14,8 @@ class Api::TweetsController < ApplicationController
       "##{params[:hashtag]}",
       lang: "en",
       result_type: "recent",
-      filter_level: params[:content_filter]
+      filter_level: params[:content_filter],
+      # since_id: params[:last_tweet_id]
     ).take(params[:number_of_tweets].to_i)
     @embeded_tweets = @tweets.map do |tweet|
       client.oembed(tweet.id, hide_media: true, maxwidth: 400).to_json

@@ -20,13 +20,27 @@ class HashtagFeed extends Component {
     setInterval(this.handleFetchTweets, 100000)
   }
 
+  lastTweetId() {
+    let lastTweetId;
+
+    if (this.props.tweets[this.props.hashtag.text]) {
+      lastTweetId = JSON.parse(this.props.tweets[this.props.hashtag.text].items[0]).url
+      .replace( /^\D+/g, '');
+    }
+
+    return lastTweetId || 0;
+  }
+
   handleFetchTweets() {
+
     this.props.fetchSearchTweets({
       id: this.props.user.id,
       hashtag: this.props.hashtag.text,
       number_of_tweets: this.props.hashtag.number_of_tweets,
-      content_filter: this.props.hashtag.content_filter
+      content_filter: this.props.hashtag.content_filter,
+      last_tweet_id: this.lastTweetId()
     })
+
   }
 
   _returnTweetHTML(string) {
@@ -49,6 +63,8 @@ class HashtagFeed extends Component {
   renderTweets() {
     const tweets = this.props.tweets[this.props.hashtag.text];
     let tweetElements;
+
+
 
     if (tweets && tweets.isFetching) {
       tweetElements = <div className="feed-spinner"></div>
@@ -73,16 +89,7 @@ class HashtagFeed extends Component {
   }
 
   render() {
-    const {text, id} = this.props.hashtag
-
-    const modalStyle = {
-      content: {
-        top: "10%",
-        right: "20%",
-        left: "20%",
-        bottom: "20%"
-      }
-    }
+    const {text, id} = this.props.hashtag;
 
     return (
       <section>
