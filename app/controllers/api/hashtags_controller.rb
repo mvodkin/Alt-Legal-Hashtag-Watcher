@@ -20,10 +20,19 @@ class Api::HashtagsController < ApplicationController
     end
   end
 
+  def update
+    @hashtag = Hashtag.find(params[:id])
+    if @hashtag.update_attributes(hashtag_params)
+      render json: @hashtag
+    else
+      render json: @hashtag.errors.full_messages
+    end
+  end
+
   private
 
   def hashtag_params
-    params.permit(:user_id, :text)
+    params.permit(:user_id, :text, :content_filter, :attitude_filter, :number_of_tweets)
   end
 
 end

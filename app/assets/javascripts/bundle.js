@@ -23015,6 +23015,20 @@ Object.defineProperty(exports, "__esModule", {
 
 var _actions = __webpack_require__(225);
 
+var concatOrOverwriteHashtag = function concatOrOverwriteHashtag(hashtagsArray, newHashtag) {
+
+  var dupArr = hashtagsArray.slice(0);
+
+  for (var i = 0; i < dupArr.length; i++) {
+    if (dupArr[i].id === newHashtag.id) {
+      dupArr[i] = newHashtag;
+      return dupArr;
+    }
+  }
+
+  return hashtagsArray.concat(newHashtag);
+};
+
 var userReducer = function userReducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var action = arguments[1];
@@ -23023,8 +23037,9 @@ var userReducer = function userReducer() {
     case _actions.RECEIVE_LOGOUT:
       return {};
     case _actions.RECEIVE_HASHTAG:
+
       return Object.assign({}, state, {
-        hashtags: state.hashtags.concat(action.json)
+        hashtags: concatOrOverwriteHashtag(state.hashtags, action.json)
       });
     case _actions.RECEIVE_DELETE_HASHTAG:
       var newHashtags = state.hashtags;
@@ -24235,7 +24250,7 @@ exports['default'] = thunk;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchDeleteHashtag = exports.RECEIVE_DELETE_HASHTAG = exports.REQUEST_DELETE_HASHTAG = exports.fetchAddHashtag = exports.RECEIVE_HASHTAG = exports.ADD_HASHTAG = exports.fetchLogout = exports.REQUEST_LOGOUT = exports.RECEIVE_LOGOUT = exports.REMOVE_HASHTAG = exports.RECEIVE_CURRENT_USER = exports.REQUEST_CURRENT_USER = undefined;
+exports.fetchDeleteHashtag = exports.RECEIVE_DELETE_HASHTAG = exports.REQUEST_DELETE_HASHTAG = exports.fetchUpdateHashtag = exports.fetchAddHashtag = exports.RECEIVE_HASHTAG = exports.ADD_HASHTAG = exports.fetchLogout = exports.REQUEST_LOGOUT = exports.RECEIVE_LOGOUT = exports.REMOVE_HASHTAG = exports.RECEIVE_CURRENT_USER = exports.REQUEST_CURRENT_USER = undefined;
 
 var _isomorphicFetch = __webpack_require__(226);
 
@@ -24294,6 +24309,18 @@ var fetchAddHashtag = exports.fetchAddHashtag = function fetchAddHashtag(text, u
   return function (dispatch) {
     dispatch(requestAddHashtag(text, userId));
     (0, _isomorphicFetch2.default)("api/hashtags?text=" + text + "&user_id=" + userId, { method: "POST" }).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      return dispatch(receiveHashtag(json));
+    }).catch(function (error) {
+      return console.log(error);
+    });
+  };
+};
+
+var fetchUpdateHashtag = exports.fetchUpdateHashtag = function fetchUpdateHashtag(contentFilter, numberOfTweets, hashtagId) {
+  return function (dispatch) {
+    (0, _isomorphicFetch2.default)("api/hashtags/" + hashtagId + "?content_filter=" + contentFilter + "&number_of_tweets=" + numberOfTweets, { method: "PATCH" }).then(function (response) {
       return response.json();
     }).then(function (json) {
       return dispatch(receiveHashtag(json));
@@ -24922,6 +24949,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     },
     fetchSearchTweets: function fetchSearchTweets(params) {
       return dispatch((0, _twitter_api_actions.fetchSearchTweets)(params));
+    },
+    fetchUpdateHashtag: function fetchUpdateHashtag(contentFilter, numberOfTweets, hashtagId) {
+      return dispatch((0, _actions.fetchUpdateHashtag)(contentFilter, numberOfTweets, hashtagId));
     }
   };
 };
@@ -25072,6 +25102,10 @@ var _reactModal = __webpack_require__(312);
 
 var _reactModal2 = _interopRequireDefault(_reactModal);
 
+var _options_modal = __webpack_require__(313);
+
+var _options_modal2 = _interopRequireDefault(_options_modal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25109,7 +25143,9 @@ var HashtagFeed = function (_Component) {
     value: function handleFetchTweets() {
       this.props.fetchSearchTweets({
         id: this.props.user.id,
-        hashtag: this.props.hashtag.text
+        hashtag: this.props.hashtag.text,
+        number_of_tweets: this.props.hashtag.number_of_tweets,
+        content_filter: this.props.hashtag.content_filter
       });
     }
   }, {
@@ -25171,11 +25207,15 @@ var HashtagFeed = function (_Component) {
       return _react2.default.createElement(
         'section',
         null,
-        _react2.default.createElement(_reactModal2.default, {
-          onRequestClose: this.closeModal,
-          isOpen: this.state.modalOpen,
-          contentLabel: 'Options modal'
-        }),
+        _react2.default.createElement(
+          _reactModal2.default,
+          {
+            onRequestClose: this.closeModal,
+            isOpen: this.state.modalOpen,
+            contentLabel: 'Options modal'
+          },
+          _react2.default.createElement(_options_modal2.default, this.props)
+        ),
         _react2.default.createElement(
           'div',
           { className: 'watchlist-header' },
@@ -26697,6 +26737,155 @@ module.exports = function(node, event) {
 module.exports = __webpack_require__(307);
 
 
+
+/***/ }),
+/* 313 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(31);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var OptionsModal = function (_Component) {
+  _inherits(OptionsModal, _Component);
+
+  function OptionsModal(props) {
+    _classCallCheck(this, OptionsModal);
+
+    var _this = _possibleConstructorReturn(this, (OptionsModal.__proto__ || Object.getPrototypeOf(OptionsModal)).call(this, props));
+
+    _this.state = {
+      numberOfTweets: 5,
+      contentFilter: "none"
+    };
+    return _this;
+  }
+
+  _createClass(OptionsModal, [{
+    key: "processForm",
+    value: function processForm() {
+      this.props.fetchUpdateHashtag(this.state.contentFilter, this.state.numberOfTweets, this.props.hashtag.id);
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.setState({
+        numberOfTweets: this.props.hashtag.number_of_tweets,
+        contentFilter: this.props.hashtag.content_filter
+      });
+    }
+  }, {
+    key: "update",
+    value: function update(key) {
+      var _this2 = this;
+
+      return function (e) {
+        return _this2.setState(_defineProperty({}, key, e.target.value));
+      };
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.processForm();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2.default.createElement(
+        "form",
+        null,
+        _react2.default.createElement(
+          "label",
+          null,
+          "Number of Tweets",
+          _react2.default.createElement(
+            "select",
+            {
+              onChange: this.update("numberOfTweets"),
+              value: this.state.numberOfTweets
+            },
+            _react2.default.createElement(
+              "option",
+              { value: "5" },
+              "5"
+            ),
+            _react2.default.createElement(
+              "option",
+              { value: "10" },
+              "10"
+            ),
+            _react2.default.createElement(
+              "option",
+              { value: "15" },
+              "15"
+            )
+          )
+        ),
+        _react2.default.createElement(
+          "label",
+          null,
+          "Content Filter Level",
+          _react2.default.createElement(
+            "label",
+            null,
+            "None",
+            _react2.default.createElement("input", {
+              onChange: this.update("contentFilter"),
+              type: "radio",
+              checked: this.state.contentFilter === "none",
+              value: "none"
+            })
+          ),
+          _react2.default.createElement(
+            "label",
+            null,
+            "Low",
+            _react2.default.createElement("input", {
+              onChange: this.update("contentFilter"),
+              type: "radio",
+              checked: this.state.contentFilter === "low",
+              value: "low"
+            })
+          ),
+          _react2.default.createElement(
+            "label",
+            null,
+            "Medium",
+            _react2.default.createElement("input", {
+              onChange: this.update("contentFilter"),
+              type: "radio",
+              checked: this.state.contentFilter === "med",
+              value: "med"
+            })
+          )
+        )
+      );
+    }
+  }]);
+
+  return OptionsModal;
+}(_react.Component);
+
+exports.default = OptionsModal;
 
 /***/ })
 /******/ ]);

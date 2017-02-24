@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Modal from 'react-modal';
+import OptionsModal from './options_modal';
 
 class HashtagFeed extends Component {
   constructor(props) {
@@ -22,7 +23,9 @@ class HashtagFeed extends Component {
   handleFetchTweets() {
     this.props.fetchSearchTweets({
       id: this.props.user.id,
-      hashtag: this.props.hashtag.text
+      hashtag: this.props.hashtag.text,
+      number_of_tweets: this.props.hashtag.number_of_tweets,
+      content_filter: this.props.hashtag.content_filter
     })
   }
 
@@ -78,7 +81,7 @@ class HashtagFeed extends Component {
           isOpen={this.state.modalOpen}
           contentLabel="Options modal"
           >
-
+          <OptionsModal {...this.props}/>
         </Modal>
         <div className="watchlist-header">
           <h3>#{text}</h3>

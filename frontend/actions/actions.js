@@ -44,6 +44,19 @@ export const fetchAddHashtag = (text, userId) => dispatch => {
     .catch(error => console.log(error))
 };
 
+export const fetchUpdateHashtag = (
+    contentFilter,
+    numberOfTweets,
+    hashtagId
+  ) => dispatch => {
+  fetch(
+    `api/hashtags/${hashtagId}?content_filter=${contentFilter}&number_of_tweets=${numberOfTweets}`,
+    {method: "PATCH"})
+    .then(response => response.json())
+    .then(json => dispatch(receiveHashtag(json)))
+    .catch(error => console.log(error))
+}
+
 export const REQUEST_DELETE_HASHTAG = "REQUEST_DELETE_HASHTAG";
 const requestDeleteHashtag = (hashtagId) => ({
   type: REQUEST_DELETE_HASHTAG,
