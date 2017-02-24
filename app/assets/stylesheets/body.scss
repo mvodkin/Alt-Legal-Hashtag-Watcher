@@ -112,3 +112,50 @@ section:last-child {
   text-decoration: underline;
   margin-left: 2px;
 }
+
+.options-modal {
+  top: 20%;
+  right: 25%;
+  left: 25%;
+  bottom: 30%;
+  background-color: white;
+  position: absolute;
+  font-family: "lato", "helvetica", sans-serif;
+  color: #605E5E;
+  border: 1px solid #dddddd;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.options-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.options-modal-content > * {
+  margin: 20px 0 20px 0;
+}
+
+.options-modal-content > label {
+  display: flex;
+  flex-direction: column;
+}
+
+.options-modal-content label > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100px;
+}
+
+.options-modal-content > h2 {
+  font-weight: bold;
+  font-size: 24px;
+  text-transform: uppercase;
+}
+
+.input-warning {
+  color: #BE1413;
+  margin: 0 20px 0 20px;
+}

@@ -11,11 +11,14 @@ class OptionsModal extends Component {
   }
 
   processForm() {
-    this.props.fetchUpdateHashtag(
-      this.state.contentFilter,
-      this.state.numberOfTweets,
-      this.props.hashtag.id
-    )
+    if (this.state.contentFilter !== this.props.hashtag.content_filter ||
+      this.state.numberOfTweets !== this.props.hashtag.number_of_tweets) {
+        this.props.fetchUpdateHashtag(
+          this.state.contentFilter,
+          this.state.numberOfTweets,
+          this.props.hashtag.id
+        )
+      }
   }
 
   componentDidMount() {
@@ -35,7 +38,8 @@ class OptionsModal extends Component {
 
   render() {
     return (
-      <form>
+      <form className="options-modal-content">
+        <h2>Options</h2>
         <label>Number of Tweets
           <select
             onChange={this.update("numberOfTweets")}
@@ -48,30 +52,37 @@ class OptionsModal extends Component {
         </label>
 
         <label>Content Filter Level
-          <label>None
+
+          <div>
+            <label>None</label>
             <input
               onChange={this.update("contentFilter")}
               type="radio"
               checked={this.state.contentFilter === "none"}
               value="none"
               ></input>
-          </label>
-          <label>Low
+          </div>
+
+          <div>
+            <label>Low</label>
             <input
               onChange={this.update("contentFilter")}
               type="radio"
               checked={this.state.contentFilter === "low"}
               value="low"
               ></input>
-          </label>
-          <label>Medium
+          </div>
+
+          <div>
+            <label>Medium</label>
             <input
               onChange={this.update("contentFilter")}
               type="radio"
               checked={this.state.contentFilter === "med"}
               value="med"
               ></input>
-          </label>
+          </div>
+
         </label>
       </form>
 

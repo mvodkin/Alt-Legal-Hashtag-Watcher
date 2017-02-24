@@ -24991,9 +24991,14 @@ var HashtagInput = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (HashtagInput.__proto__ || Object.getPrototypeOf(HashtagInput)).call(this, props));
 
-    _this.state = { hashtag: "" };
+    _this.state = {
+      hashtag: "",
+      valid: true
+    };
+
     _this.handleChange = _this.handleChange.bind(_this);
     _this.handleSubmit = _this.handleSubmit.bind(_this);
+    _this.validateHashtag = _this.validateHashtag.bind(_this);
     return _this;
   }
 
@@ -25003,17 +25008,72 @@ var HashtagInput = function (_Component) {
       var _this2 = this;
 
       return function (e) {
-        return _this2.setState({ hashtag: e.currentTarget.value });
+        _this2.setState({ hashtag: e.currentTarget.value });
+        setTimeout(_this2.validateHashtag, 20);
       };
     }
   }, {
     key: "handleSubmit",
     value: function handleSubmit(e) {
       e.preventDefault();
-      var userId = this.props.user.id;
-      var text = this.state.hashtag;
-      this.props.fetchAddHashtag(text, userId);
-      this.setState({ hashtag: "" });
+      if (this.state.valid) {
+        var userId = this.props.user.id;
+        var text = this.state.hashtag;
+        this.props.fetchAddHashtag(text, userId);
+        this.setState({ hashtag: "" });
+      }
+    }
+  }, {
+    key: "validateHashtag",
+    value: function validateHashtag() {
+
+      var ranges = ["\uD83C[\uDF00-\uDFFF]", "\uD83D[\uDC00-\uDE4F]", "\uD83D[\uDE80-\uDEFF]"];
+
+      if (this.state.hashtag.includes(" ")) {
+        this.setState({ valid: false });
+        return;
+      }
+
+      if (this.state.hashtag.match(ranges.join("|"))) {
+        this.setState({ valid: false });
+        return;
+      }
+
+      if (this.state.hashtag.length === 0) {
+        this.setState({ valid: false });
+        return;
+      }
+
+      this.setState({ valid: true });
+    }
+  }, {
+    key: "invalidStyle",
+    value: function invalidStyle() {
+      if (!this.state.valid) {
+        return {
+          borderColor: "#BE1413"
+        };
+      }
+    }
+  }, {
+    key: "renderWarning",
+    value: function renderWarning() {
+      if (!this.state.valid) {
+        return _react2.default.createElement(
+          "div",
+          null,
+          _react2.default.createElement(
+            "div",
+            { className: "input-warning" },
+            "Cannot contain spaces or Emojis"
+          ),
+          _react2.default.createElement(
+            "div",
+            { className: "input-warning" },
+            "and cannot be blank"
+          )
+        );
+      }
     }
   }, {
     key: "render",
@@ -25022,12 +25082,14 @@ var HashtagInput = function (_Component) {
         "form",
         { onSubmit: this.handleSubmit },
         _react2.default.createElement("input", {
+          style: this.invalidStyle(),
           className: "hashtag-input",
           type: "text",
           placeholder: "Add a hashtag",
           onChange: this.handleChange(),
           value: this.state.hashtag
-        })
+        }),
+        this.renderWarning()
       );
     }
   }]);
@@ -25204,12 +25266,23 @@ var HashtagFeed = function (_Component) {
           text = _props$hashtag.text,
           id = _props$hashtag.id;
 
+
+      var modalStyle = {
+        content: {
+          top: "10%",
+          right: "20%",
+          left: "20%",
+          bottom: "20%"
+        }
+      };
+
       return _react2.default.createElement(
         'section',
         null,
         _react2.default.createElement(
           _reactModal2.default,
           {
+            className: 'options-modal',
             onRequestClose: this.closeModal,
             isOpen: this.state.modalOpen,
             contentLabel: 'Options modal'
@@ -26783,7 +26856,9 @@ var OptionsModal = function (_Component) {
   _createClass(OptionsModal, [{
     key: "processForm",
     value: function processForm() {
-      this.props.fetchUpdateHashtag(this.state.contentFilter, this.state.numberOfTweets, this.props.hashtag.id);
+      if (this.state.contentFilter !== this.props.hashtag.content_filter || this.state.numberOfTweets !== this.props.hashtag.number_of_tweets) {
+        this.props.fetchUpdateHashtag(this.state.contentFilter, this.state.numberOfTweets, this.props.hashtag.id);
+      }
     }
   }, {
     key: "componentDidMount",
@@ -26812,7 +26887,12 @@ var OptionsModal = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         "form",
-        null,
+        { className: "options-modal-content" },
+        _react2.default.createElement(
+          "h2",
+          null,
+          "Options"
+        ),
         _react2.default.createElement(
           "label",
           null,
@@ -26845,9 +26925,13 @@ var OptionsModal = function (_Component) {
           null,
           "Content Filter Level",
           _react2.default.createElement(
-            "label",
+            "div",
             null,
-            "None",
+            _react2.default.createElement(
+              "label",
+              null,
+              "None"
+            ),
             _react2.default.createElement("input", {
               onChange: this.update("contentFilter"),
               type: "radio",
@@ -26856,9 +26940,13 @@ var OptionsModal = function (_Component) {
             })
           ),
           _react2.default.createElement(
-            "label",
+            "div",
             null,
-            "Low",
+            _react2.default.createElement(
+              "label",
+              null,
+              "Low"
+            ),
             _react2.default.createElement("input", {
               onChange: this.update("contentFilter"),
               type: "radio",
@@ -26867,9 +26955,13 @@ var OptionsModal = function (_Component) {
             })
           ),
           _react2.default.createElement(
-            "label",
+            "div",
             null,
-            "Medium",
+            _react2.default.createElement(
+              "label",
+              null,
+              "Medium"
+            ),
             _react2.default.createElement("input", {
               onChange: this.update("contentFilter"),
               type: "radio",

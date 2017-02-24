@@ -74,9 +74,20 @@ class HashtagFeed extends Component {
 
   render() {
     const {text, id} = this.props.hashtag
+
+    const modalStyle = {
+      content: {
+        top: "10%",
+        right: "20%",
+        left: "20%",
+        bottom: "20%"
+      }
+    }
+
     return (
       <section>
         <Modal
+          className="options-modal"
           onRequestClose={this.closeModal}
           isOpen={this.state.modalOpen}
           contentLabel="Options modal"
