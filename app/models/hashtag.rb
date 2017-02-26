@@ -14,15 +14,8 @@
 
 class Hashtag < ActiveRecord::Base
 
-  validates :watchlist_id, :text, presence: true
+  validates :user_id, :text, presence: true
 
-  belongs_to :watchlist,
-    class_name: "Watchlist",
-    primary_key: :id,
-    foreign_key: :watchlist_id
-
-  has_one :user,
-    through: :watchlist,
-    source: :user
+  belongs_to :user
 
 end

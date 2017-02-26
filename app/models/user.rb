@@ -17,13 +17,7 @@
 
 class User < ActiveRecord::Base
 
-  # after_initialize :ensure_session_token
-
-  has_one :watchlist
-
-  has_many :hashtags,
-    through: :watchlist,
-    source: :hashtags
+  has_many :hashtags, dependent: :destroy
 
   def self.from_omniauth(auth_hash)
     user = self.find_or_initialize_by(uid: auth_hash[:uid])

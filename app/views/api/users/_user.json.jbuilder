@@ -4,5 +4,4 @@ json.extract! user,
   :name,
   :url,
   :image,
-  :watchlist,
   :hashtags
