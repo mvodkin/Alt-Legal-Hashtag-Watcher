@@ -15,9 +15,8 @@ class Api::TweetsController < ApplicationController
       result_type: "recent",
       since_id: params[:last_tweet_id].to_i
     ).take(params[:number_of_tweets].to_i)
-    @embeded_tweets = @tweets.map do |tweet|
-      client.oembed(tweet.id, hide_media: true, maxwidth: 400).to_json
-    end
+
+    @embeded_tweets = client.oembeds(@tweets, hide_media: true, maxwidth: 400).to_json
 
     if (@embeded_tweets)
       render json: @embeded_tweets, status: 200

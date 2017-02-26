@@ -27,7 +27,7 @@ class HashtagFeed extends Component {
     const { tweets, hashtag } = this.props;
 
     if (tweets[hashtag.text]) {
-      lastTweetId = JSON.parse(tweets[hashtag.text].items[0]).url
+      lastTweetId = tweets[hashtag.text].items[0].url
       .match(/\d+$/)[0]
     }
 
@@ -72,7 +72,7 @@ class HashtagFeed extends Component {
       tweetElements = tweets.items.map((tweet, idx) => (
         <li
           key={idx}
-          dangerouslySetInnerHTML={this._returnTweetHTML(JSON.parse(tweet).html)}
+          dangerouslySetInnerHTML={this._returnTweetHTML(tweet.html)}
           >
         </li>
       ));

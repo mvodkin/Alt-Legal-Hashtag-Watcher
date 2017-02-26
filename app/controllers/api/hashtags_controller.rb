@@ -1,7 +1,6 @@
 class Api::HashtagsController < ApplicationController
 
   def create
-    # watchlist = Watchlist.find_by(user_id: params[:user_id])
     @hashtag = Hashtag.new(user_id: params[:user_id], text: params[:text])
     if @hashtag.save
       render json: @hashtag

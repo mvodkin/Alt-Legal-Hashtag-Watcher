@@ -16,6 +16,7 @@ const tweetReducer = (state = {}, action) => {
 
   switch (action.type) {
     case RECEIVE_TWEETS:
+      debugger
       const { hashtag, json, numberOfTweets } = action;
       obj[hashtag] = {}
       obj[hashtag].items = combineTweets(
