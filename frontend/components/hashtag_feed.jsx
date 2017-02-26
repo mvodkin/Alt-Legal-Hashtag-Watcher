@@ -20,12 +20,13 @@ class HashtagFeed extends Component {
     setInterval(this.handleFetchTweets, 100000)
   }
 
-  lastTweetId() {
+  _lastTweetId() {
     let lastTweetId;
 
     if (this.props.tweets[this.props.hashtag.text]) {
       lastTweetId = JSON.parse(this.props.tweets[this.props.hashtag.text].items[0]).url
-      .replace( /^\D+/g, '');
+      // .replace( /^\D+/g, '');
+      .match(/\d+$/)[0]
     }
 
     return lastTweetId || 0;
@@ -38,7 +39,7 @@ class HashtagFeed extends Component {
       hashtag: this.props.hashtag.text,
       number_of_tweets: this.props.hashtag.number_of_tweets,
       content_filter: this.props.hashtag.content_filter,
-      last_tweet_id: this.lastTweetId()
+      last_tweet_id: this._lastTweetId()
     })
 
   }

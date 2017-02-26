@@ -3,16 +3,31 @@ import {RECEIVE_TWEETS, REQUEST_TWEETS} from "../actions/twitter_api_actions";
 const tweetReducer = (state = {}, action) => {
   const obj = {}
 
+  const combineTweets = (items, json, numberOfTweets) => {
+
+    if (items && json.length > 0) {
+      return json.concat(items).slice(0, numberOfTweets);
+    } else if (items && json.length === 0) {
+      return items;
+    } else if (json.length > 0) {
+      return json;
+    }
+  }
+
   switch (action.type) {
     case RECEIVE_TWEETS:
-      const { hashtag, json } = action;
-      obj[action.hashtag] = {}
-      obj[hashtag].items = json;
+      const { hashtag, json, numberOfTweets } = action;
+      debugger
+      obj[hashtag] = {}
+      obj[hashtag].items = combineTweets(
+        state[hashtag].items,
+        json,
+        numberOfTweets
+      );
       obj[hashtag].isFetching = false;
-      return Object.assign({}, state, obj);
+      return Object.assign({}, state, obj)
     case REQUEST_TWEETS:
-      obj[action.hashtag] = {}
-      obj[action.hashtag].isFetching = true;
+      obj[action.hashtag] = Object.assign({}, state[action.hashtag], { isFetching: true })
       return Object.assign({}, state, obj)
     default:
       return state;

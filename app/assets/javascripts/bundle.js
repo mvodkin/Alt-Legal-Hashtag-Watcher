@@ -11673,12 +11673,14 @@ var HashtagFeed = function (_Component) {
       setInterval(this.handleFetchTweets, 100000);
     }
   }, {
-    key: 'lastTweetId',
-    value: function lastTweetId() {
+    key: '_lastTweetId',
+    value: function _lastTweetId() {
       var lastTweetId = void 0;
 
       if (this.props.tweets[this.props.hashtag.text]) {
-        lastTweetId = JSON.parse(this.props.tweets[this.props.hashtag.text].items[0]).url.replace(/^\D+/g, '');
+        lastTweetId = JSON.parse(this.props.tweets[this.props.hashtag.text].items[0]).url
+        // .replace( /^\D+/g, '');
+        .match(/\d+$/)[0];
       }
 
       return lastTweetId || 0;
@@ -11692,7 +11694,7 @@ var HashtagFeed = function (_Component) {
         hashtag: this.props.hashtag.text,
         number_of_tweets: this.props.hashtag.number_of_tweets,
         content_filter: this.props.hashtag.content_filter,
-        last_tweet_id: this.lastTweetId()
+        last_tweet_id: this._lastTweetId()
       });
     }
   }, {
@@ -12115,18 +12117,30 @@ var tweetReducer = function tweetReducer() {
 
   var obj = {};
 
+  var combineTweets = function combineTweets(items, json, numberOfTweets) {
+
+    if (items && json.length > 0) {
+      return json.concat(items).slice(0, numberOfTweets);
+    } else if (items && json.length === 0) {
+      return items;
+    } else if (json.length > 0) {
+      return json;
+    }
+  };
+
   switch (action.type) {
     case _twitter_api_actions.RECEIVE_TWEETS:
       var hashtag = action.hashtag,
-          json = action.json;
+          json = action.json,
+          numberOfTweets = action.numberOfTweets;
 
-      obj[action.hashtag] = {};
-      obj[hashtag].items = json;
+      debugger;
+      obj[hashtag] = {};
+      obj[hashtag].items = combineTweets(state[hashtag].items, json, numberOfTweets);
       obj[hashtag].isFetching = false;
       return Object.assign({}, state, obj);
     case _twitter_api_actions.REQUEST_TWEETS:
-      obj[action.hashtag] = {};
-      obj[action.hashtag].isFetching = true;
+      obj[action.hashtag] = Object.assign({}, state[action.hashtag], { isFetching: true });
       return Object.assign({}, state, obj);
     default:
       return state;
