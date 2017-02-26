@@ -32,8 +32,10 @@ class Header extends Component {
       return (
         <div onClick={this.showDropdown}>
           <img src={image}></img>
-          <span>{name}</span>
-          <span className="caret"></span>
+          <div className="current-user">
+            <span>{name}</span>
+            <span className="caret"></span>
+          </div>
           <span
             className="dropdown"
             onClick={this.handleLogout}

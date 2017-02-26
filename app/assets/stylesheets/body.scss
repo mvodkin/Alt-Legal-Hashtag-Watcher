@@ -93,6 +93,10 @@ section:last-child {
   line-height: 1.42105263;
 }
 
+.hashtag-input:focus {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
 .feed-spinner {
   background-image: image-url("spin.svg");
   background-repeat: no-repeat;
