@@ -11,19 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170224183342) do
+ActiveRecord::Schema.define(version: 20170226185743) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "hashtags", force: :cascade do |t|
-    t.integer  "watchlist_id",                      null: false
-    t.string   "text",                              null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.string   "content_filter",   default: "none"
+    t.integer  "watchlist_id",                   null: false
+    t.string   "text",                           null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.string   "content_filter",   default: ""
     t.string   "number_of_tweets", default: "5"
-    t.string   "attitude_filter"
+    t.string   "attitude_filter",  default: ""
   end
 
   add_index "hashtags", ["watchlist_id"], name: "index_hashtags_on_watchlist_id", using: :btree

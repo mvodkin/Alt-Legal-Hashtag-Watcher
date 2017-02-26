@@ -23,10 +23,6 @@ const buildQueryString = (object) => {
   return params.join("&");
 }
 
-const setTweetWidth = () => {
-
-}
-
 export const fetchSearchTweets = (params) => dispatch => {
   dispatch(requestTweets(params.hashtag));
   fetch(`/api/tweets?${buildQueryString(params)}`)

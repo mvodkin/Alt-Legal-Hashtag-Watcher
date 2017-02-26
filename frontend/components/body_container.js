@@ -16,8 +16,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAddHashtag: (text, userId) => dispatch(fetchAddHashtag(text, userId)),
   fetchDeleteHashtag: (hashtagId) => dispatch(fetchDeleteHashtag(hashtagId)),
   fetchSearchTweets: (params) => dispatch(fetchSearchTweets(params)),
-  fetchUpdateHashtag: (contentFilter, numberOfTweets, hashtagId) => (
-    dispatch(fetchUpdateHashtag(contentFilter, numberOfTweets, hashtagId))
+  fetchUpdateHashtag: (contentFilter, numberOfTweets, attitudeFilter, hashtagId) => (
+    dispatch(fetchUpdateHashtag(contentFilter, numberOfTweets, attitudeFilter, hashtagId))
   )
 });
 

@@ -8,16 +8,15 @@ const tweetReducer = (state = {}, action) => {
     if (items && json.length > 0) {
       return json.concat(items).slice(0, numberOfTweets);
     } else if (items && json.length === 0) {
-      return items;
+      return items.slice(0, numberOfTweets);
     } else if (json.length > 0) {
-      return json;
+      return json.slice(0, numberOfTweets);
     }
   }
 
   switch (action.type) {
     case RECEIVE_TWEETS:
       const { hashtag, json, numberOfTweets } = action;
-      debugger
       obj[hashtag] = {}
       obj[hashtag].items = combineTweets(
         state[hashtag].items,

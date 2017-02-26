@@ -4622,8 +4622,6 @@ var buildQueryString = function buildQueryString(object) {
   return params.join("&");
 };
 
-var setTweetWidth = function setTweetWidth() {};
-
 var fetchSearchTweets = exports.fetchSearchTweets = function fetchSearchTweets(params) {
   return function (dispatch) {
     dispatch(requestTweets(params.hashtag));
@@ -4725,9 +4723,9 @@ var fetchAddHashtag = exports.fetchAddHashtag = function fetchAddHashtag(text, u
   };
 };
 
-var fetchUpdateHashtag = exports.fetchUpdateHashtag = function fetchUpdateHashtag(contentFilter, numberOfTweets, hashtagId) {
+var fetchUpdateHashtag = exports.fetchUpdateHashtag = function fetchUpdateHashtag(contentFilter, numberOfTweets, attitudeFilter, hashtagId) {
   return function (dispatch) {
-    (0, _isomorphicFetch2.default)("api/hashtags/" + hashtagId + "?content_filter=" + contentFilter + "&number_of_tweets=" + numberOfTweets, { method: "PATCH" }).then(function (response) {
+    (0, _isomorphicFetch2.default)("api/hashtags/" + hashtagId + "?content_filter=" + contentFilter + "&number_of_tweets=" + numberOfTweets + "&attitude_filter=" + attitudeFilter, { method: "PATCH" }).then(function (response) {
       return response.json();
     }).then(function (json) {
       return dispatch(receiveHashtag(json));
@@ -7112,8 +7110,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     fetchSearchTweets: function fetchSearchTweets(params) {
       return dispatch((0, _twitter_api_actions.fetchSearchTweets)(params));
     },
-    fetchUpdateHashtag: function fetchUpdateHashtag(contentFilter, numberOfTweets, hashtagId) {
-      return dispatch((0, _actions.fetchUpdateHashtag)(contentFilter, numberOfTweets, hashtagId));
+    fetchUpdateHashtag: function fetchUpdateHashtag(contentFilter, numberOfTweets, attitudeFilter, hashtagId) {
+      return dispatch((0, _actions.fetchUpdateHashtag)(contentFilter, numberOfTweets, attitudeFilter, hashtagId));
     }
   };
 };
@@ -11626,6 +11624,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__(9);
@@ -11663,6 +11663,7 @@ var HashtagFeed = function (_Component) {
     _this._loadTweets = _this._loadTweets.bind(_this);
     _this.openModal = _this.openModal.bind(_this);
     _this.closeModal = _this.closeModal.bind(_this);
+    _this.lastTweetId = _this.lastTweetId.bind(_this);
     return _this;
   }
 
@@ -11673,14 +11674,17 @@ var HashtagFeed = function (_Component) {
       setInterval(this.handleFetchTweets, 100000);
     }
   }, {
-    key: '_lastTweetId',
-    value: function _lastTweetId() {
+    key: 'lastTweetId',
+    value: function lastTweetId() {
       var lastTweetId = void 0;
 
-      if (this.props.tweets[this.props.hashtag.text]) {
-        lastTweetId = JSON.parse(this.props.tweets[this.props.hashtag.text].items[0]).url
-        // .replace( /^\D+/g, '');
-        .match(/\d+$/)[0];
+      var _props = this.props,
+          tweets = _props.tweets,
+          hashtag = _props.hashtag;
+
+
+      if (tweets[hashtag.text]) {
+        lastTweetId = JSON.parse(tweets[hashtag.text].items[0]).url.match(/\d+$/)[0];
       }
 
       return lastTweetId || 0;
@@ -11688,13 +11692,13 @@ var HashtagFeed = function (_Component) {
   }, {
     key: 'handleFetchTweets',
     value: function handleFetchTweets() {
-
       this.props.fetchSearchTweets({
         id: this.props.user.id,
         hashtag: this.props.hashtag.text,
         number_of_tweets: this.props.hashtag.number_of_tweets,
         content_filter: this.props.hashtag.content_filter,
-        last_tweet_id: this._lastTweetId()
+        attitude_filter: this.props.hashtag.attitude_filter,
+        last_tweet_id: this.lastTweetId()
       });
     }
   }, {
@@ -11765,7 +11769,7 @@ var HashtagFeed = function (_Component) {
             isOpen: this.state.modalOpen,
             contentLabel: 'Options modal'
           },
-          _react2.default.createElement(_options_modal2.default, this.props)
+          _react2.default.createElement(_options_modal2.default, _extends({}, this.props, { lastTweetId: this.lastTweetId }))
         ),
         _react2.default.createElement(
           'div',
@@ -12122,9 +12126,9 @@ var tweetReducer = function tweetReducer() {
     if (items && json.length > 0) {
       return json.concat(items).slice(0, numberOfTweets);
     } else if (items && json.length === 0) {
-      return items;
+      return items.slice(0, numberOfTweets);
     } else if (json.length > 0) {
-      return json;
+      return json.slice(0, numberOfTweets);
     }
   };
 
@@ -12134,7 +12138,6 @@ var tweetReducer = function tweetReducer() {
           json = action.json,
           numberOfTweets = action.numberOfTweets;
 
-      debugger;
       obj[hashtag] = {};
       obj[hashtag].items = combineTweets(state[hashtag].items, json, numberOfTweets);
       obj[hashtag].isFetching = false;
@@ -26798,16 +26801,32 @@ var OptionsModal = function (_Component) {
 
     _this.state = {
       numberOfTweets: 5,
-      contentFilter: "none"
+      contentFilter: "",
+      attitudeFilter: ""
     };
+
+    _this.handleFetchTweets = _this.handleFetchTweets.bind(_this);
     return _this;
   }
 
   _createClass(OptionsModal, [{
     key: "processForm",
     value: function processForm() {
-      if (this.state.contentFilter !== this.props.hashtag.content_filter || this.state.numberOfTweets !== this.props.hashtag.number_of_tweets) {
-        this.props.fetchUpdateHashtag(this.state.contentFilter, this.state.numberOfTweets, this.props.hashtag.id);
+      var _state = this.state,
+          contentFilter = _state.contentFilter,
+          numberOfTweets = _state.numberOfTweets,
+          attitudeFilter = _state.attitudeFilter,
+          _props$hashtag = this.props.hashtag,
+          content_filter = _props$hashtag.content_filter,
+          number_of_tweets = _props$hashtag.number_of_tweets,
+          attitude_filter = _props$hashtag.attitude_filter,
+          id = _props$hashtag.id;
+
+
+      if (contentFilter !== content_filter || numberOfTweets !== number_of_tweets || attitudeFilter !== attitude_filter) {
+        this.props.fetchUpdateHashtag(contentFilter, numberOfTweets, attitudeFilter, id);
+
+        this.handleFetchTweets();
       }
     }
   }, {
@@ -26815,7 +26834,20 @@ var OptionsModal = function (_Component) {
     value: function componentDidMount() {
       this.setState({
         numberOfTweets: this.props.hashtag.number_of_tweets,
-        contentFilter: this.props.hashtag.content_filter
+        contentFilter: this.props.hashtag.content_filter,
+        attitudeFilter: this.props.hashtag.attitude_filter
+      });
+    }
+  }, {
+    key: "handleFetchTweets",
+    value: function handleFetchTweets() {
+      this.props.fetchSearchTweets({
+        id: this.props.user.id,
+        hashtag: this.props.hashtag.text,
+        number_of_tweets: this.state.numberOfTweets,
+        content_filter: this.state.contentFilter,
+        attitude_filter: this.state.attitudeFilter,
+        last_tweet_id: 0
       });
     }
   }, {
@@ -26873,20 +26905,20 @@ var OptionsModal = function (_Component) {
         _react2.default.createElement(
           "label",
           null,
-          "Content Filter Level",
+          "Content Filter",
           _react2.default.createElement(
             "div",
             null,
             _react2.default.createElement(
               "label",
               null,
-              "None"
+              "On"
             ),
             _react2.default.createElement("input", {
               onChange: this.update("contentFilter"),
               type: "radio",
-              checked: this.state.contentFilter === "none",
-              value: "none"
+              checked: this.state.contentFilter === "safe",
+              value: "safe"
             })
           ),
           _react2.default.createElement(
@@ -26895,13 +26927,33 @@ var OptionsModal = function (_Component) {
             _react2.default.createElement(
               "label",
               null,
-              "Low"
+              "Off"
             ),
             _react2.default.createElement("input", {
               onChange: this.update("contentFilter"),
               type: "radio",
-              checked: this.state.contentFilter === "low",
-              value: "low"
+              checked: this.state.contentFilter === "",
+              value: ""
+            })
+          )
+        ),
+        _react2.default.createElement(
+          "label",
+          null,
+          "Attitude Filter",
+          _react2.default.createElement(
+            "div",
+            null,
+            _react2.default.createElement(
+              "label",
+              null,
+              ":)"
+            ),
+            _react2.default.createElement("input", {
+              onChange: this.update("attitudeFilter"),
+              type: "radio",
+              checked: this.state.attitudeFilter === "positive",
+              value: "positive"
             })
           ),
           _react2.default.createElement(
@@ -26910,13 +26962,28 @@ var OptionsModal = function (_Component) {
             _react2.default.createElement(
               "label",
               null,
-              "Medium"
+              ":("
             ),
             _react2.default.createElement("input", {
-              onChange: this.update("contentFilter"),
+              onChange: this.update("attitudeFilter"),
               type: "radio",
-              checked: this.state.contentFilter === "med",
-              value: "med"
+              checked: this.state.attitudeFilter === "negative",
+              value: "negative"
+            })
+          ),
+          _react2.default.createElement(
+            "div",
+            null,
+            _react2.default.createElement(
+              "label",
+              null,
+              "none"
+            ),
+            _react2.default.createElement("input", {
+              onChange: this.update("attitudeFilter"),
+              type: "radio",
+              checked: this.state.attitudeFilter === "",
+              value: ""
             })
           )
         )

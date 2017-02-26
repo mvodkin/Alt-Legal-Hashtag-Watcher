@@ -47,10 +47,11 @@ export const fetchAddHashtag = (text, userId) => dispatch => {
 export const fetchUpdateHashtag = (
     contentFilter,
     numberOfTweets,
+    attitudeFilter,
     hashtagId
   ) => dispatch => {
   fetch(
-    `api/hashtags/${hashtagId}?content_filter=${contentFilter}&number_of_tweets=${numberOfTweets}`,
+    `api/hashtags/${hashtagId}?content_filter=${contentFilter}&number_of_tweets=${numberOfTweets}&attitude_filter=${attitudeFilter}`,
     {method: "PATCH"})
     .then(response => response.json())
     .then(json => dispatch(receiveHashtag(json)))

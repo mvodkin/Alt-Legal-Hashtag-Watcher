@@ -6,26 +6,50 @@ class OptionsModal extends Component {
 
     this.state = {
       numberOfTweets: 5,
-      contentFilter: "none"
+      contentFilter: "",
+      attitudeFilter: ""
     }
+
+    this.handleFetchTweets = this.handleFetchTweets.bind(this);
   }
 
   processForm() {
-    if (this.state.contentFilter !== this.props.hashtag.content_filter ||
-      this.state.numberOfTweets !== this.props.hashtag.number_of_tweets) {
+
+    const { contentFilter, numberOfTweets, attitudeFilter} = this.state,
+      {content_filter, number_of_tweets, attitude_filter, id } = this.props.hashtag;
+
+    if (contentFilter !== content_filter ||
+      numberOfTweets !== number_of_tweets ||
+      attitudeFilter !== attitude_filter
+    ) {
         this.props.fetchUpdateHashtag(
-          this.state.contentFilter,
-          this.state.numberOfTweets,
-          this.props.hashtag.id
+          contentFilter,
+          numberOfTweets,
+          attitudeFilter,
+          id
         )
-      }
+
+        this.handleFetchTweets()
+    }
   }
 
   componentDidMount() {
     this.setState({
       numberOfTweets: this.props.hashtag.number_of_tweets,
-      contentFilter: this.props.hashtag.content_filter
+      contentFilter: this.props.hashtag.content_filter,
+      attitudeFilter: this.props.hashtag.attitude_filter
     })
+  }
+
+  handleFetchTweets() {
+    this.props.fetchSearchTweets({
+      id: this.props.user.id,
+      hashtag: this.props.hashtag.text,
+      number_of_tweets: this.state.numberOfTweets,
+      content_filter: this.state.contentFilter,
+      attitude_filter: this.state.attitudeFilter,
+      last_tweet_id: 0
+    });
   }
 
   update(key) {
@@ -51,35 +75,59 @@ class OptionsModal extends Component {
           </select>
         </label>
 
-        <label>Content Filter Level
+        <label>Content Filter
 
           <div>
-            <label>None</label>
+            <label>On</label>
             <input
               onChange={this.update("contentFilter")}
               type="radio"
-              checked={this.state.contentFilter === "none"}
-              value="none"
+              checked={this.state.contentFilter === "safe"}
+              value="safe"
               ></input>
           </div>
 
           <div>
-            <label>Low</label>
+            <label>Off</label>
             <input
               onChange={this.update("contentFilter")}
               type="radio"
-              checked={this.state.contentFilter === "low"}
-              value="low"
+              checked={this.state.contentFilter === ""}
+              value=""
+              ></input>
+          </div>
+
+        </label>
+
+        <label>Attitude Filter
+
+          <div>
+            <label>:)</label>
+            <input
+              onChange={this.update("attitudeFilter")}
+              type="radio"
+              checked={this.state.attitudeFilter === "positive"}
+              value="positive"
               ></input>
           </div>
 
           <div>
-            <label>Medium</label>
+            <label>:(</label>
             <input
-              onChange={this.update("contentFilter")}
+              onChange={this.update("attitudeFilter")}
               type="radio"
-              checked={this.state.contentFilter === "med"}
-              value="med"
+              checked={this.state.attitudeFilter === "negative"}
+              value="negative"
+              ></input>
+          </div>
+
+          <div>
+            <label>none</label>
+            <input
+              onChange={this.update("attitudeFilter")}
+              type="radio"
+              checked={this.state.attitudeFilter === ""}
+              value=""
               ></input>
           </div>
 

@@ -9,12 +9,10 @@ class Api::TweetsController < ApplicationController
       config.access_token_secret = user.secret
     end
 
-
     @tweets = client.search(
-      "##{params[:hashtag]}",
+      "##{params[:hashtag]}#{parse_search_flags}",
       lang: "en",
       result_type: "recent",
-      filter_level: params[:content_filter],
       since_id: params[:last_tweet_id].to_i
     ).take(params[:number_of_tweets].to_i)
     @embeded_tweets = @tweets.map do |tweet|
@@ -26,6 +24,16 @@ class Api::TweetsController < ApplicationController
     else
       render json: "tweet not found", status: 422
     end
+  end
+
+  private
+
+  def parse_search_flags
+    flags = []
+    flags << ":)"           if params[:attitude_filter] == "positive"
+    flags << ":("           if params[:attitude_filter] == "negative"
+    flags << "filter:safe"  if params[:content_filter] == "safe"
+    " " + flags.join(" ")
   end
 
 end

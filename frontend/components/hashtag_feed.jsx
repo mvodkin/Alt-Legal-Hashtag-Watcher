@@ -13,6 +13,7 @@ class HashtagFeed extends Component {
     this._loadTweets = this._loadTweets.bind(this);
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.lastTweetId = this.lastTweetId.bind(this);
   }
 
   componentDidMount() {
@@ -20,12 +21,13 @@ class HashtagFeed extends Component {
     setInterval(this.handleFetchTweets, 100000)
   }
 
-  _lastTweetId() {
+  lastTweetId() {
     let lastTweetId;
 
-    if (this.props.tweets[this.props.hashtag.text]) {
-      lastTweetId = JSON.parse(this.props.tweets[this.props.hashtag.text].items[0]).url
-      // .replace( /^\D+/g, '');
+    const { tweets, hashtag } = this.props;
+
+    if (tweets[hashtag.text]) {
+      lastTweetId = JSON.parse(tweets[hashtag.text].items[0]).url
       .match(/\d+$/)[0]
     }
 
@@ -33,15 +35,14 @@ class HashtagFeed extends Component {
   }
 
   handleFetchTweets() {
-
     this.props.fetchSearchTweets({
       id: this.props.user.id,
       hashtag: this.props.hashtag.text,
       number_of_tweets: this.props.hashtag.number_of_tweets,
       content_filter: this.props.hashtag.content_filter,
-      last_tweet_id: this._lastTweetId()
+      attitude_filter: this.props.hashtag.attitude_filter,
+      last_tweet_id: this.lastTweetId()
     })
-
   }
 
   _returnTweetHTML(string) {
@@ -65,8 +66,6 @@ class HashtagFeed extends Component {
     const tweets = this.props.tweets[this.props.hashtag.text];
     let tweetElements;
 
-
-
     if (tweets && tweets.isFetching) {
       tweetElements = <div className="feed-spinner"></div>
     } else if (tweets && tweets.items) {
@@ -82,7 +81,6 @@ class HashtagFeed extends Component {
     setTimeout(this._loadTweets, 50)
 
     return tweetElements;
-
   }
 
   handleDeleteHashtag() {
@@ -100,7 +98,7 @@ class HashtagFeed extends Component {
           isOpen={this.state.modalOpen}
           contentLabel="Options modal"
           >
-          <OptionsModal {...this.props}/>
+          <OptionsModal {...this.props} lastTweetId={this.lastTweetId}/>
         </Modal>
         <div className="watchlist-header">
           <h3>#{text}</h3>
